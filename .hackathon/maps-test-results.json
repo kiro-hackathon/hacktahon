@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-17",
+  "browser": "Chrome via Playwright",
+  "tileMode": "intercepted fixture; no automated live OSM pan/zoom traffic",
+  "passed": [
+    "Six sourced coordinates; maps stay lazy before opening",
+    "Map renders six markers and attribution; zoom and pan work (fixture tiles)",
+    "Supported trip shows both fitted markers, labeled demo line, expansion, and original timeline/illustration",
+    "Browser GPS success preserves exact position in memory and markers; no fabricated route or coordinate persistence/transmission",
+    "GPS unsupported state explicitly switches to a working demo trip without losing destination",
+    "Manually editing the origin clears GPS state and restores curated routing",
+    "Outside-CDO GPS is retained honestly, with no substituted landmark or jeepney",
+    "Reload of GPS-only result requests a new position instead of persisting coordinates",
+    "Browser permission denial explains recovery; separate demo button works",
+    "Geolocation unavailable error recovers without replacing the origin",
+    "Geolocation timed out error recovers without replacing the origin",
+    "Geolocation unsupported browser explains the limitation",
+    "Geolocation insecure context explains the limitation",
+    "Geolocation only runs after a click; late callbacks cannot overwrite a newer demo choice",
+    "Tile failures preserve the illustration and steps; retry restores the map",
+    "Expanded home/result maps fit at 320/360/375/390/430/768/1440px",
+    "No uncaught JavaScript errors across map/geolocation scenarios"
+  ],
+  "pageErrors": []
+}

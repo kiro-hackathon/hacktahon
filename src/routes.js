@@ -1,12 +1,6 @@
 /** Fictional demonstration data. Never use these routes or stops as travel directions. */
-export const locations = [
-  { id: 'ustp', name: 'USTP CDO', category: 'Campus', short: 'USTP CDO', icon: 'campus', aliases: ['university', 'school', 'lapasan'] },
-  { id: 'divisoria', name: 'Divisoria', category: 'City center', short: 'Divisoria', icon: 'city', aliases: ['downtown', 'plaza'] },
-  { id: 'centrio', name: 'Centrio', category: 'Shopping & dining', short: 'Centrio', icon: 'bag', aliases: ['ayala', 'mall'] },
-  { id: 'limketkai', name: 'Limketkai', category: 'Shopping & dining', short: 'Limketkai', icon: 'building', aliases: ['ketkai', 'mall'] },
-  { id: 'cogon', name: 'Cogon Market', category: 'Local market', short: 'Cogon Market', icon: 'market', aliases: ['palengke', 'market'] },
-  { id: 'sm', name: 'SM CDO Downtown Premier', category: 'Shopping & dining', short: 'SM Downtown', icon: 'shop', aliases: ['sm downtown', 'sm cdo', 'mall', 'sm cdo downtown'] },
-];
+import { locations } from './locations.js';
+export { locations } from './locations.js';
 
 // Only these pairs and their reverse journeys are supported. D codes are invented.
 export const routes = [

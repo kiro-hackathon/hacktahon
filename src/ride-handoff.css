@@ -1,0 +1,54 @@
+/* Secondary service handoff; inherits the existing transit palette and type. */
+.ride-options { border-top: 1px solid var(--line); padding-top: 24px; margin: 3px 0 27px; }
+.ride-options h2 { font-size: 19px; letter-spacing: -.5px; }
+.ride-options-description { font-size: 12px; line-height: 1.8; color: var(--muted); margin-top: 7px; }
+.ride-service-list { border: 1px solid var(--line); border-radius: 12px; background: #fff; margin-top: 17px; }
+.ride-service { display: flex; align-items: center; gap: 12px; padding: 15px; }
+.ride-service + .ride-service { border-top: 1px solid var(--line); }
+.ride-service-icon { display: grid; place-items: center; flex-shrink: 0; width: 37px; height: 37px; border-radius: 10px; background: var(--mint); color: var(--teal); }
+.ride-service-icon svg { width: 23px; height: 23px; stroke-width: 1.5; }
+.ride-service-copy { flex: 1; min-width: 0; }
+.ride-service h3 { font-size: 13px; font-weight: 750; }
+.ride-service-copy p { font-size: 10px; color: var(--muted); line-height: 1.7; margin-top: 4px; }
+.ride-open { display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 10px 12px; min-height: 44px; border: 1px solid #d8e3da; border-radius: 8px; background: #f6f9f3; color: var(--teal-dark); font-size: 11px; font-weight: 700; flex-shrink: 0; }
+.ride-open svg { width: 14px; height: 14px; }
+.ride-open:hover { border-color: var(--teal); background: #eaf2e7; }
+.ride-options-note { font-size: 10px; line-height: 1.7; color: var(--muted); margin-top: 10px; }
+.ride-handoff { max-width: 460px; padding: 25px; }
+.handoff-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 17px; }
+.handoff-heading { display: flex; align-items: center; gap: 12px; }
+.handoff-heading h2 { font-size: 23px; letter-spacing: -.6px; }
+#handoff-description { font-size: 12px; line-height: 1.85; color: var(--muted); margin-top: 16px; }
+.handoff-trip { border: 1px solid var(--line); border-radius: 12px; padding: 0 17px; background: #fff; margin: 20px 0 8px; }
+.handoff-trip>div { padding: 15px 0; }
+.handoff-trip>div + div { border-top: 1px solid var(--line); }
+.handoff-trip dt { font-size: 8px; letter-spacing: 1.5px; font-weight: 750; color: var(--muted); }
+.handoff-trip dd { font-size: 14px; line-height: 1.7; font-weight: 650; margin: 5px 0 0; overflow-wrap: anywhere; }
+.handoff-copy { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; color: var(--teal-dark); background: transparent; padding: 8px 0; font-size: 12px; font-weight: 650; }
+.handoff-copy svg { width: 16px; height: 16px; }
+.handoff-copy:hover { text-decoration: underline; text-underline-offset: 4px; }
+.handoff-copy:disabled { opacity: .65; }
+.handoff-status { font-size: 11px; line-height: 1.8; color: var(--teal-dark); }
+.handoff-copy-fallback { width: 100%; padding: 11px; margin-top: 9px; border: 1px solid var(--line); border-radius: 8px; font: inherit; font-size: 16px; color: var(--ink); background: white; }
+.handoff-external-note { font-size: 11px; color: var(--muted); line-height: 1.8; margin: 17px 0; overflow-wrap: anywhere; }
+.handoff-actions { display: flex; align-items: center; gap: 10px; }
+.handoff-cancel { flex: 1; padding: 13px; min-height: 50px; border: 1px solid var(--line); border-radius: 10px; background: #fff; font-size: 12px; font-weight: 650; }
+.handoff-cancel:hover { background: var(--mint); }
+.handoff-actions .primary-button { flex: 2; min-width: 0; width: auto; font-size: 12px; }
+.handoff-actions .primary-button svg { width: 15px; height: 15px; }
+@media (max-width: 760px) {
+  .ride-service { gap: 9px; padding: 13px 11px; }
+  .ride-service-icon { width: 33px; height: 33px; border-radius: 9px; }
+  .ride-service h3 { font-size: 13px; }
+  .ride-service-copy p { font-size: 11px; }
+  .ride-open { padding: 10px; font-size: 11px; }
+  .ride-options-description { font-size: 12px; }
+  .ride-handoff { align-self: end; margin: auto auto 0; border-radius: 20px 20px 0 0; width: 100%; padding: 23px 23px max(23px, env(safe-area-inset-bottom)); max-height: calc(100dvh - 16px); }
+  .handoff-heading h2 { font-size: 22px; }
+}
+@media (max-width: 359px) {
+  .ride-service { flex-wrap: wrap; }
+  .ride-open { width: 100%; }
+  .ride-handoff { padding-inline: 18px; }
+  .handoff-heading h2 { font-size: 20px; }
+}

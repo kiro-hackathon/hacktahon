@@ -1,4 +1,7 @@
 import { locations, routes, searchLocations, resolveLocation, findRoute } from './routes.js';
+import { detectLocation } from './geolocation.js';
+import { createTripMap, mapMarkup } from './map.js';
+import { addRideOptions, closeRideHandoff } from './ride-handoff.js';
 
 const $ = selector => document.querySelector(selector);
 const escape = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
@@ -23,10 +26,40 @@ const screens = ['home', 'result', 'empty'];
 const origin = $('#origin');
 const destination = $('#destination');
 let currentScreen = 'home';
+let currentPosition = null;
+let locationRequest = 0;
+let homeMap;
+let resultMap;
+let emptyMap;
+
+function resetLocation(message = 'Optional. Your coordinates stay in this tab.') {
+  locationRequest += 1;
+  currentPosition = null;
+  origin.classList.remove('gps-origin');
+  $('.origin-symbol').classList.remove('gps-symbol');
+  $('#use-location').disabled = false;
+  $('#use-location span').textContent = 'Use my current location';
+  $('#location-status').textContent = message;
+}
+
+function selectedOrigin() {
+  return currentPosition && origin.value === 'Current location'
+    ? { id: 'current', name: 'Current location', short: 'Current location', ...currentPosition }
+    : resolveLocation(origin.value);
+}
+
+function updateHomeMap() {
+  const from = selectedOrigin();
+  const to = resolveLocation(destination.value);
+  homeMap?.update({ from, to, connection: Boolean(from && to && findRoute(from.id, to.id)) });
+}
 
 function announce(message) { $('#announcer').textContent = message; }
 
 function showScreen(name) {
+  closeRideHandoff();
+  if (name !== 'result') { resultMap?.dispose(); resultMap = null; }
+  if (name !== 'empty') { emptyMap?.dispose(); emptyMap = null; }
   screens.forEach(screen => { $(`#${screen}-screen`).hidden = screen !== name; });
   currentScreen = name;
   closeSuggestions();
@@ -37,6 +70,7 @@ function showHome(focus = true) {
   showScreen('home');
   document.title = 'RoutaCagayan — Your next sakay, made simple.';
   if (focus) destination.focus({ preventScroll: true });
+  updateHomeMap();
 }
 
 function clearError() {
@@ -77,6 +111,7 @@ function activateOption(combo, index) {
 }
 
 function chooseLocation(combo, place) {
+  if (combo.input === origin) resetLocation();
   combo.input.value = place.name;
   clearError();
   closeSuggestions();
@@ -85,6 +120,11 @@ function chooseLocation(combo, place) {
 }
 
 function openSuggestions(combo, force = false) {
+  if (combo.input === origin && currentPosition && origin.value === 'Current location') {
+    combo.matches = [];
+    closeSuggestions();
+    return;
+  }
   closeSuggestions(combo);
   combo.active = -1;
   combo.input.removeAttribute('aria-activedescendant');
@@ -102,7 +142,7 @@ function openSuggestions(combo, force = false) {
 }
 
 combos.forEach(combo => {
-  combo.input.addEventListener('input', () => { clearError(); openSuggestions(combo); updateShortcuts(); });
+  combo.input.addEventListener('input', () => { if (combo.input === origin) resetLocation(); clearError(); openSuggestions(combo); updateShortcuts(); });
   combo.input.addEventListener('focus', () => openSuggestions(combo));
   combo.input.addEventListener('keydown', event => {
     if (event.key === 'Escape') { closeSuggestions(); return; }
@@ -144,6 +184,7 @@ function updateShortcuts() {
     button.setAttribute('aria-label', isStart ? `${location.name} is your starting point` : `Set destination to ${location.name}`);
     button.querySelector('.place-arrow').textContent = isStart ? '✓' : '↗';
   });
+  updateHomeMap();
 }
 
 $('#popular-destinations').addEventListener('click', event => {
@@ -157,6 +198,8 @@ $('#popular-destinations').addEventListener('click', event => {
 });
 
 $('#swap-button').addEventListener('click', () => {
+  if (currentPosition) return showError('Current location is a starting point only. Choose a landmark starting point to swap places.', origin);
+  resetLocation();
   [origin.value, destination.value] = [destination.value, origin.value];
   clearError();
   updateShortcuts();
@@ -180,6 +223,7 @@ function schematic(route) {
 }
 
 function renderResult(route, focus = true) {
+  resultMap?.dispose();
   $('#result-screen').innerHTML = `<button class="back-button" data-action="back">${icon('arrow')}Change trip</button>
     <div class="result-topline"><div><div class="eyebrow">YOUR NEXT SAKAY</div><h1 class="result-title" id="result-title" tabindex="-1">${escape(route.from.short)} <span aria-hidden="true">→</span><span class="sr-only">to</span> ${escape(route.to.short)}</h1><p class="result-kicker">One jeepney. Four simple steps. Here’s your example journey.</p></div><span class="demo-pill">FICTIONAL DEMO ROUTE</span></div>
     <div class="result-layout"><div><article class="recommendation" aria-labelledby="route-name"><div class="recommendation-label">${icon('check')} YOUR DEMO JEEPNEY</div><div class="route-identity"><span class="route-badge">${route.code}<small>DEMO</small></span><div><h2 id="route-name">${escape(route.name)}</h2><p>Board: ${escape(route.boarding)}<br>Get off: ${escape(route.dropoff)}</p></div></div><div class="route-meta"><span>${icon('jeep')}1 jeepney</span><span>${icon('route')}No transfers</span><span>Fictional example</span></div></article>
@@ -187,12 +231,17 @@ function renderResult(route, focus = true) {
     <aside class="journey-panel" aria-labelledby="diagram-title"><div class="eyebrow">THE BIG PICTURE</div><h2 id="diagram-title">A little less guesswork.</h2><p>See how the pieces of your sample trip connect.</p>${schematic(route)}<div class="diagram-legend"><span><i class="legend-walk"></i>Walk</span><span><i class="legend-ride"></i>Ride the jeepney</span></div><div class="diagram-disclaimer">${icon('info')}<span>A schematic, not a map. Stops and distances are illustrative. Don’t use this diagram for navigation.</span></div></aside></div>
     <p class="result-disclosure"><strong>Demo only.</strong> ${route.code} is an invented route code. All boarding points, stops, and instructions above are fictional and unverified. Check local transport information before traveling.</p>`;
   showScreen('result');
+  addRideOptions($('#result-screen .journey-steps'), { origin: route.from.name, destination: route.to.name });
+  const panel = $('#result-screen .journey-panel');
+  panel.querySelector('.schematic').insertAdjacentHTML('beforebegin', mapMarkup('result-trip-map'));
+  resultMap = createTripMap($('#result-trip-map'), { from: route.from, to: route.to, connection: true });
   document.title = `${route.from.short} to ${route.to.short} — Demo trip | RoutaCagayan`;
   if (focus) $('#result-title').focus({ preventScroll: true });
   announce(`Fictional ${route.code} example found. ${route.from.name} to ${route.to.name}. Four journey steps.`);
 }
 
 function renderEmpty(from, to, focus = true) {
+  emptyMap?.dispose();
   const examples = routes.filter(route => route.from === from.id || route.to === from.id).slice(0, 3);
   $('#empty-screen').innerHTML = `<button class="back-button" data-action="back">${icon('arrow')}Change trip</button><div class="empty-content"><div class="empty-icon">${icon('route')}</div><span class="demo-pill">A SMALL DEMO, FOR NOW</span><h1 id="empty-title" tabindex="-1">This trip isn’t in our<br>demo yet.</h1><p>We don’t have a sample for <strong>${escape(from.name)} → ${escape(to.name)}</strong>. Your places are saved in the planner. Try a supported example below, or change your trip.</p><button class="primary-button" data-action="back">Change my trip <span aria-hidden="true">→</span></button></div><section class="supported-options"><h2>Try a journey from ${escape(from.short)}</h2>${examples.map(route => {
     const toId = route.from === from.id ? route.to : route.from;
@@ -200,12 +249,15 @@ function renderEmpty(from, to, focus = true) {
     return `<button class="example-trip" data-from="${from.id}" data-to="${toId}"><span>${route.code}</span><span>${escape(from.short)} → ${escape(target.short)}</span><span aria-hidden="true">→</span></button>`;
   }).join('')}</section>`;
   showScreen('empty');
+  $('#empty-screen .supported-options').insertAdjacentHTML('beforebegin', mapMarkup('empty-trip-map', 'See the selected landmarks'));
+  emptyMap = createTripMap($('#empty-trip-map'), { from, to, connection: false });
   document.title = 'Try another demo journey | RoutaCagayan';
   if (focus) $('#empty-title').focus({ preventScroll: true });
   announce(`No demo route for ${from.name} to ${to.name}. Try one of the supported examples.`);
 }
 
 function planTrip(from, to, push = true) {
+  resetLocation();
   origin.value = from.name;
   destination.value = to.name;
   clearError();
@@ -224,6 +276,12 @@ $('#trip-form').addEventListener('submit', event => {
   if (!destination.value.trim()) return showError('Choose a destination, or pick a landmark below.', destination);
   const from = resolveLocation(origin.value);
   const to = resolveLocation(destination.value);
+  if (currentPosition && origin.value === 'Current location') {
+    if (!to) return showError('Choose one of the six CDO landmarks as your destination.', destination);
+    history.pushState({ screen: 'gps', to: to.id }, '', `#location/${to.id}`);
+    renderGpsTrip(to);
+    return;
+  }
   if (!from) return showError('We don’t recognize that starting point. Choose one of the six CDO landmarks.', origin);
   if (!to) return showError('We don’t recognize that destination. Choose one of the six CDO landmarks.', destination);
   if (from.id === to.id) return showError('You’ve picked the same place twice. Choose a different destination.', destination);
@@ -248,6 +306,16 @@ $('#plan-link').addEventListener('click', event => {
 });
 
 function restoreLocation() {
+  const gpsMatch = location.hash.match(/^#location\/([a-z]+)$/);
+  if (gpsMatch) {
+    const to = locations.find(place => place.id === gpsMatch[1]);
+    if (currentPosition && to) { renderGpsTrip(to); return; }
+    history.replaceState({ screen: 'home' }, '', location.pathname + location.search);
+    resetLocation('Your GPS position wasn’t saved. Detect it again, choose a landmark, or try the demo location.');
+    origin.value = '';
+    showHome(false);
+    return;
+  }
   const match = location.hash.match(/^#trip\/([a-z]+)\/([a-z]+)$/);
   const from = match && locations.find(place => place.id === match[1]);
   const to = match && locations.find(place => place.id === match[2]);
@@ -260,5 +328,73 @@ const dialog = $('#about-dialog');
 ['#how-button', '#about-demo'].forEach(selector => $(selector).addEventListener('click', () => { closeSuggestions(); dialog.showModal(); }));
 ['#close-dialog', '#got-it'].forEach(selector => $(selector).addEventListener('click', () => dialog.close()));
 dialog.addEventListener('click', event => { if (event.target === dialog) { const rect = dialog.getBoundingClientRect(); if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) dialog.close(); } });
+
+function renderGpsTrip(to) {
+  emptyMap?.dispose();
+  const from = selectedOrigin();
+  $('#empty-screen').innerHTML = `<button class="back-button" data-action="back">${icon('arrow')}Change trip</button><div class="empty-content"><div class="empty-icon">${icon('stop')}</div><span class="demo-pill">GPS POSITION · NO LIVE ROUTING</span><h1 id="empty-title" tabindex="-1">Live jeepney routing<br>isn’t available yet.</h1><p>Your detected position is shown on the map with <strong>${escape(to.name)}</strong>. We can’t recommend a verified jeepney from GPS coordinates. ${currentPosition.inDemoArea ? 'Choose a demo landmark to explore a fictional sample trip.' : 'Your position is outside our Cagayan de Oro demo area. You can still explore a clearly labeled sample.'}</p><button class="primary-button" data-action="back">Choose a starting landmark <span aria-hidden="true">→</span></button></div>${mapMarkup('gps-trip-map', 'View your position and destination')}<section class="supported-options"><h2>Switch to a fictional demo trip</h2><p class="gps-demo-explanation">This replaces your GPS starting point with a configured landmark. It does not move your real location.</p><button class="example-trip" data-gps-demo="${to.id}"><span>DEMO</span><span>Try demo location: USTP CDO</span><span aria-hidden="true">→</span></button></section>`;
+  showScreen('empty');
+  const mapSection = $('#gps-trip-map');
+  mapSection.open = true;
+  emptyMap = createTripMap(mapSection, { from, to, connection: false });
+  document.title = 'GPS location — No live routing | RoutaCagayan';
+  $('#empty-title').focus({ preventScroll: true });
+  announce('Location detected. Live jeepney routing is not available. Choose a starting landmark or switch to the demo.');
+}
+
+$('#use-location').addEventListener('click', async () => {
+  closeSuggestions();
+  const request = ++locationRequest;
+  $('#use-location').disabled = true;
+  $('#use-location span').textContent = 'Detecting location…';
+  $('#location-status').textContent = 'Waiting for your browser’s location permission. You can still choose a landmark instead.';
+  try {
+    const position = await detectLocation();
+    if (request !== locationRequest) return;
+    currentPosition = position;
+    origin.value = 'Current location';
+    origin.classList.add('gps-origin');
+    $('.origin-symbol').classList.add('gps-symbol');
+    clearError();
+    $('#location-status').textContent = position.inDemoArea
+      ? 'Location detected. Live jeepney routing isn’t available; choose a demo landmark for sample directions.'
+      : 'Location detected outside our Cagayan de Oro demo area. Choose a landmark or try the separate demo location.';
+    updateShortcuts();
+    $('#home-trip-map').open = true;
+    announce('Current location selected. Exact coordinates are kept only in this tab.');
+  } catch (error) {
+    if (request !== locationRequest) return;
+    $('#location-status').textContent = error.message;
+  } finally {
+    if (request === locationRequest) {
+      $('#use-location').disabled = false;
+      $('#use-location span').textContent = 'Use my current location';
+    }
+  }
+});
+
+function useDemoLocation() {
+  chooseLocation(combos[0], locations.find(place => place.id === 'ustp'));
+  $('#location-status').textContent = 'Demo location selected: USTP CDO. This is a sample landmark, not your detected position.';
+}
+$('#demo-location').addEventListener('click', useDemoLocation);
+document.addEventListener('click', event => {
+  const demo = event.target.closest('[data-gps-demo]');
+  if (!demo) return;
+  const to = locations.find(place => place.id === demo.dataset.gpsDemo);
+  useDemoLocation();
+  history.pushState({ screen: 'home' }, '', location.pathname + location.search);
+  showHome();
+  if (to.id === 'ustp') {
+    destination.value = '';
+    announce('Demo starting point set to USTP CDO. Choose a different destination.');
+  } else destination.value = to.name;
+  updateShortcuts();
+  closeSuggestions();
+  $('#find-button').focus({ preventScroll: true });
+});
+
+$('#home-map-slot').innerHTML = mapMarkup('home-trip-map', 'Explore Cagayan de Oro');
+homeMap = createTripMap($('#home-trip-map'));
 restoreLocation();
 updateShortcuts();

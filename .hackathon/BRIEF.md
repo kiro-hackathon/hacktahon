@@ -3,7 +3,7 @@ Student commuters choose two Cagayan de Oro landmarks and understand a fictional
 
 Stack: static HTML, CSS, ES modules; no build, dependencies, or network services.
 Scope: trip search with accessible suggestions; curated recommendations; four-step instructions and schematic.
-Out of scope: real navigation, GPS, verified route data, fares, times, accounts, backend, AI models.
+Out of scope: real navigation, verified route data, fares, times, accounts, backend, AI models.
 Visual direction: transit teal, warm off-white, amber route signage, original SVG jeepney, mobile-first planner.
 
 Acceptance:
@@ -19,3 +19,6 @@ Research (2026-10-17): landmark identities only; no route facts established.
 - SM: https://www.smprime.com/latest_news/manila-bulletin-sms-premier-mall-opens-in-downtown-cdo-on-may-12/
 All D-series routes, stops, and directions are fictional. Other landmark names are supplied by the brief.
 The user's 60-minute limit overrides the bundled three-hour schedule.
+
+## Requested map/geolocation upgrade
+Preserve the approved UI. Add vendored Leaflet + online OSM tiles as compact, expandable sections; keep the illustration available offline. Reusable sourced feature centers live in src/locations.js, with source evidence in landmark-source.json. Browser GPS is click-initiated, optional, memory-only, and never silently converted to a demo origin or valid jeepney route. All original route fixtures remain unchanged.

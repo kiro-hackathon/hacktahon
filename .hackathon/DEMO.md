@@ -26,7 +26,7 @@ Point to D1, then scroll through the steps and schematic.
 Choose Change trip. Set origin Centrio and destination Cogon Market. Search. Point to the working alternative buttons.
 
 **60–75 seconds — Scope and next step.**
-“These are explicitly fictional demonstration routes. The prototype uses local, deterministic data, not a live AI routing engine. The next step is verifying real routes and boarding points with local operators and testing with commuters. Today, the full planning interaction works, even without internet.”
+“These are explicitly fictional demonstration routes. The prototype uses local, deterministic data, not a live AI routing engine. The next step is verifying real routes and boarding points with local operators and testing with commuters. The planner works without internet; the optional real map needs online tiles.”
 
 ## Recovery
 
@@ -34,11 +34,18 @@ Choose Change trip. Set origin Centrio and destination Cogon Market. Search. Poi
 - Reliable direct result: http://127.0.0.1:8080/#trip/ustp/divisoria
 - Unsupported example: http://127.0.0.1:8080/#trip/centrio/cogon
 - If the port is busy, use `python -m http.server 8081 --bind 127.0.0.1` and update the URL.
-- No external service or network connection is required; the local HTTP server must remain running.
+- The local HTTP server must remain running. Without internet, the planner and original schematic still work; live map tiles show a fallback.
 
 ## What works / what is simulated
 
-Working: selectors, suggestions, aliases, shortcuts, swap, validation, 14 directed journeys, four-step instructions, schematic, unsupported-trip recovery, dialog, reloadable result URLs, browser history.
-Simulated: every route code, boarding point, drop-off, and travel instruction. No fares, travel times, GPS, live API, or AI model.
+Working: selectors, suggestions, aliases, shortcuts, swap, validation, 14 directed journeys, four-step instructions, schematic, unsupported-trip recovery, dialog, reloadable result URLs, browser history, optional Leaflet maps, sourced landmark markers, one-shot GPS detection, and GPS/demo recovery.
+Simulated: every route code, boarding point, drop-off, travel instruction, and straight-line demo connection. No fares, travel times, road routing API, or AI model.
+
+## Optional map/GPS walkthrough
+
+1. On home, choose **Try demo location: USTP CDO**, choose Divisoria, then open **Explore Cagayan de Oro**. Explain that the dashed line illustrates a connection and does not follow verified jeepney roads.
+2. Search, then open **Explore this trip on a map** inside the preserved illustrated panel. Show A/B markers and Expand map. The timeline is unchanged.
+3. Return home and click **Use my current location**. If permission is granted, the actual browser position is marked. Search to show the truthful “Live jeepney routing isn’t available yet” state. If permission is denied or unavailable, point to the recovery message and separate demo option. Never claim the demo button detects GPS.
+4. Explain that exact coordinates remain in tab memory; tile requests reveal the approximate map view. Reload requires detecting the GPS position again.
 
 Evidence and limits: [QA.md](QA.md). Future work: verified route data, commuter field tests, accessibility and physical-device testing.

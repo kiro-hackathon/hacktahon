@@ -7,7 +7,11 @@
   <meta name="description" content="Find your next jeepney journey in Cagayan de Oro. An interactive prototype with clearly labeled demonstration routes.">
   <title>RoutaCagayan — Your next sakay, made simple.</title>
   <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg">
+  <link rel="stylesheet" href="./assets/vendor/leaflet/leaflet.css">
   <link rel="stylesheet" href="./src/styles.css">
+  <link rel="stylesheet" href="./src/maps.css">
+  <link rel="stylesheet" href="./src/ride-handoff.css">
+  <script defer src="./assets/vendor/leaflet/leaflet.js"></script>
   <script type="module" src="./src/app.js"></script>
 </head>
 <body>
@@ -40,6 +44,8 @@
                 <div class="field-content"><label for="destination">DESTINATION</label><div class="autocomplete"><input id="destination" name="destination" type="text" placeholder="Where do you want to go?" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="destination-list" aria-describedby="form-error"><ul id="destination-list" role="listbox" class="suggestions" hidden></ul></div></div>
               </div>
             </div>
+            <div class="location-actions"><button type="button" id="use-location"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/></svg><span>Use my current location</span></button><button type="button" id="demo-location">Try demo location: USTP CDO</button></div>
+            <p class="location-status" id="location-status" role="status">Optional. Your coordinates stay in this tab.</p>
             <p id="form-error" class="form-error" role="alert" hidden></p>
             <button type="submit" class="primary-button" id="find-button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg>Find my jeepney<span class="button-arrow" aria-hidden="true">→</span></button>
           </form>
@@ -80,6 +86,8 @@
         </div>
       </div>
 
+      <div id="home-map-slot"></div>
+
       <section class="popular-section" aria-labelledby="popular-title"><div class="section-heading"><div><span class="eyebrow">A GOOD PLACE TO START</span><h2 id="popular-title">Around the city</h2></div><span class="section-hint">Pick your next stop <span aria-hidden="true">↗</span></span></div><div id="popular-destinations" class="destination-grid"></div></section>
       <div class="demo-note"><span class="info-icon" aria-hidden="true">i</span><p><strong>A little heads-up: this is a prototype.</strong> Routes and stops are fictional examples, not real travel directions.</p><button class="text-button" id="about-demo">About the demo <span aria-hidden="true">↗</span></button></div>
     </section>
@@ -91,6 +99,6 @@
 
   <footer class="site-footer"><span>Made for the everyday journey.</span><span>RoutaCagayan <span aria-hidden="true">·</span> CDO prototype, 2026</span></footer>
 
-  <dialog id="about-dialog" aria-labelledby="dialog-title"><div class="dialog-top"><span class="eyebrow">GOOD TO KNOW</span><button id="close-dialog" class="icon-button" aria-label="Close dialog">×</button></div><h2 id="dialog-title">Your next sakay,<br>in three simple steps.</h2><ol class="how-steps"><li><span>01</span><div><strong>Choose your places</strong><p>Start with a CDO landmark, then choose where you want to go.</p></div></li><li><span>02</span><div><strong>Meet your demo jeepney</strong><p>Find a curated example with a route badge, boarding point, and drop-off.</p></div></li><li><span>03</span><div><strong>Follow the journey</strong><p>See each step from your first walk to your final stop.</p></div></li></ol><div class="dialog-disclosure"><strong>A prototype, with fictional directions.</strong><p>D-series codes, boarding points, stops, and instructions are invented for this demo. The landmarks are real; the journeys are not verified. No live routing, GPS, fares, or travel times are provided. Check local transport information before traveling.</p></div><button id="got-it" class="primary-button">Got it. Let’s plan a trip <span aria-hidden="true">→</span></button></dialog>
+  <dialog id="about-dialog" aria-labelledby="dialog-title"><div class="dialog-top"><span class="eyebrow">GOOD TO KNOW</span><button id="close-dialog" class="icon-button" aria-label="Close dialog">×</button></div><h2 id="dialog-title">Your next sakay,<br>in three simple steps.</h2><ol class="how-steps"><li><span>01</span><div><strong>Choose your places</strong><p>Start with a CDO landmark, then choose where you want to go.</p></div></li><li><span>02</span><div><strong>Meet your demo jeepney</strong><p>Find a curated example with a route badge, boarding point, and drop-off.</p></div></li><li><span>03</span><div><strong>Follow the journey</strong><p>See each step from your first walk to your final stop.</p></div></li></ol><div class="dialog-disclosure"><strong>A prototype, with fictional directions.</strong><p>D-series codes, boarding points, stops, and instructions are invented for this demo. The landmarks are real; the journeys are not verified. Optional GPS shows your position only. No live routing, fares, or travel times are provided. Check local transport information before traveling.</p></div><button id="got-it" class="primary-button">Got it. Let’s plan a trip <span aria-hidden="true">→</span></button></dialog>
 </body>
 </html>

@@ -1,0 +1,68 @@
+[
+  {
+    "id": "ustp",
+    "osm": "https://www.openstreetmap.org/way/427550462",
+    "name": "University of Science and Technology of Southern Philippines",
+    "coordinates": {
+      "lat": 8.4862343,
+      "lon": 124.6567017
+    },
+    "verified": "2026-10-17",
+    "meaning": "OSM feature bounding-box center; not an entrance or boarding point"
+  },
+  {
+    "id": "divisoria",
+    "osm": "https://www.openstreetmap.org/relation/13841686",
+    "name": "Divisoria Plaza",
+    "coordinates": {
+      "lat": 8.4777014,
+      "lon": 124.6438021
+    },
+    "verified": "2026-10-17",
+    "meaning": "OSM feature bounding-box center; not an entrance or boarding point"
+  },
+  {
+    "id": "centrio",
+    "osm": "https://www.openstreetmap.org/relation/4659728",
+    "name": "Centrio Mall",
+    "coordinates": {
+      "lat": 8.4848322,
+      "lon": 124.6510816
+    },
+    "verified": "2026-10-17",
+    "meaning": "OSM feature bounding-box center; not an entrance or boarding point"
+  },
+  {
+    "id": "limketkai",
+    "osm": "https://www.openstreetmap.org/way/129409508",
+    "name": "Limketkai Mall",
+    "coordinates": {
+      "lat": 8.4819682,
+      "lon": 124.6565655
+    },
+    "verified": "2026-10-17",
+    "meaning": "OSM feature bounding-box center; not an entrance or boarding point"
+  },
+  {
+    "id": "cogon",
+    "osm": "https://www.openstreetmap.org/way/178432221",
+    "name": "Cogon Public Market",
+    "coordinates": {
+      "lat": 8.47743,
+      "lon": 124.6515306
+    },
+    "verified": "2026-10-17",
+    "meaning": "OSM feature bounding-box center; not an entrance or boarding point"
+  },
+  {
+    "id": "sm",
+    "osm": "https://www.openstreetmap.org/way/611712300",
+    "name": "SM CDO Downtown Premier",
+    "coordinates": {
+      "lat": 8.4842559,
+      "lon": 124.6547009
+    },
+    "verified": "2026-10-17",
+    "meaning": "OSM feature bounding-box center; not an entrance or boarding point"
+  }
+]

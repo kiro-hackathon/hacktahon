@@ -52,4 +52,27 @@ The default bundled Chromium binary was absent; tests used the existing Chrome c
 - Actual browser-chrome 200% zoom control: NOT RUN; viewport equivalent tested instead.
 - Comprehensive WCAG certification and automated contrast audit: NOT RUN. Semantic labels, ARIA behavior, focus styling, reduced motion, keyboard suggestions, and focus transfer were implemented/checked within the stated coverage.
 - All route facts: NOT VERIFIED. Routes and instructions are clearly labeled fictional in the interface and documentation.
-- No backend, live GPS, AI inference, fares, or time estimation exists.
+- No backend, AI inference, fares, time estimation, or live road routing exists. Optional browser GPS was added in the upgrade below.
+
+## Map and geolocation upgrade
+
+Executed `node tests/maps.cjs` with the same NODE_PATH and Chrome setup above: **17 check groups passed**, exit 0. Machine-readable evidence: [maps-test-results.json](maps-test-results.json).
+
+- Six landmark coordinates have explicit OSM feature sources and persisted verification evidence in [landmark-source.json](landmark-source.json). Points are feature centers, not boarding locations.
+- No map tiles are requested before opening a section. Opened maps show all configured markers, visible attribution, origin/destination roles, and keyboard-accessible marker names.
+- Zoom buttons, pointer panning, compact/expanded controls, fit-to-endpoints, and the labeled dashed demo connection were exercised. GPS scenarios have no demo connection or route recommendation.
+- Browser geolocation success used Chrome’s geolocation permission and position emulation. Returned coordinates were preserved exactly in marker state. Browser permission denial used the actual Chromium permission setting. Error codes for unavailable/timeout, missing API, and insecure context were separately injected to exercise their handlers; these are simulations of provider failures, not physical GPS tests.
+- Outside-area GPS retained the reported position, showed coverage guidance, and produced no substituted location or recommendation. The demo switch preserved the destination and explicitly replaced GPS with USTP. Manual origin editing restored curated routing. Reload discarded the GPS position with an explanation.
+- No geolocation call occurred on load. A delayed callback could not override a later demo choice.
+- Assertions found no exact coordinates in local/session storage, URL/history, or outgoing request URLs. OSM tile requests still imply the approximate viewed map area; the interface and README explain this.
+- Tile request failures showed a fallback message while retaining the original illustration and all four steps. Retrying after restored fixture availability recovered the map.
+- Expanded home and result maps had no horizontal overflow at **320, 360, 375, 390, 430, 768, and 1440px**. Visual review covered 390px home/result and desktop with the original UI intact.
+- No uncaught JavaScript errors across upgrade scenarios. Expected network errors from the intentionally aborted tile test are not reported as application exceptions.
+
+**Tile test policy:** automated pan/zoom and responsive tests fulfill tile requests with a marked SVG fixture, preventing repeated automated requests against public OSM servers. Fixture screenshots are labeled `*-fixture.png`. A separate single live-map view returned **four HTTP 200 tile responses** and displayed “Map ready.” Its screenshot is `maps-screenshots/live-map-desktop.png`. No real tile prefetch/bulk download or offline map cache was added.
+
+**Regression:** re-ran `node tests/smoke.cjs`: all 14 original check groups passed. Closed maps preserve the previous local-only request behavior. `node --check` covers app, map, geolocation, routes, and locations modules.
+
+**Usability corrections during upgrade:** marker accessible names now explicitly identify both role and place rather than only “A/B”; collapsing an expanded section resets the expansion control; the initial landmark preview fits all six configured points. Request tokens prevent stale GPS callbacks from overriding manual/demo choices. Tile-library failure retains the planner and offers a reload action.
+
+**Still NOT RUN:** physical GPS hardware, a human-operated browser permission prompt, Safari/Firefox, screen readers, and comprehensive accessibility certification. The city coverage rectangle is intentionally coarse and is not a legal city boundary. Landmark data verification does not verify jeepney directions.
