@@ -123,15 +123,16 @@ const { chromium } = require('playwright');
     }
     pass('Home, result, and empty states: no overflow at 320/360/375/390/430/768/1440px');
 
-    await page.setViewportSize({ width: 390, height: 844 });
+    // Browser zoom changes the CSS viewport. 640 CSS px represents a 1280px
+    // display at 200%; CSS `zoom` would not update responsive media queries.
+    await page.setViewportSize({ width: 640, height: 450 });
     await page.goto(base);
-    await page.evaluate(() => { document.body.style.zoom = '2'; });
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
-    await page.evaluate(() => { document.body.style.zoom = ''; });
     await page.emulateMedia({ reducedMotion: 'reduce' });
     assert.equal(await page.evaluate(() => getComputedStyle(document.documentElement).scrollBehavior), 'auto');
-    pass('200% zoom reflow and reduced-motion scroll behavior');
+    pass('200% zoom equivalent reflow (640 CSS px) and reduced-motion scroll behavior');
 
+    await page.setViewportSize({ width: 1440, height: 1000 });
     await page.goto(`${base}/#trip/ustp/divisoria`);
     await page.reload();
     await page.getByRole('link', { name: 'Plan a trip', exact: true }).click();

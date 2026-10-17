@@ -1,0 +1,21 @@
+{
+  "browser": "Chrome (Playwright)",
+  "passed": [
+    "Empty destination shows actionable validation",
+    "Unknown landmark shows suggestion and validation recovery",
+    "Identical endpoints are handled",
+    "Shortcut → D1 result; four correct steps; disclosure; focus",
+    "Reload, change trip, preserved fields, swap, and reverse instructions",
+    "Unsupported pair offers a working journey from the same origin",
+    "Autocomplete alias search, ArrowDown, Enter, and Escape",
+    "Both information controls and dialog dismissal work",
+    "All 7 curated pairs work in both directions (14 journeys)",
+    "Home, result, and empty states: no overflow at 320/360/375/390/430/768/1440px",
+    "200% zoom equivalent reflow (640 CSS px) and reduced-motion scroll behavior",
+    "Plan navigation, browser Back, and Forward restore correct screens",
+    "App makes only local requests and works with external network blocked",
+    "No browser console errors, uncaught exceptions, or HTTP failures"
+  ],
+  "errors": [],
+  "date": "2026-10-17"
+}
