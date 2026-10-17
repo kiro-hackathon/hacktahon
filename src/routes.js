@@ -90,6 +90,7 @@ function makeOption(line, direction) {
     description: `${line.code} corridor reference. Confirm this trip with the driver.`, signboard: direction.signboard,
     boarding: `${from.short} area · confirm locally`, dropoff: `${to.short} area · ask driver`,
     transferCount: 0, rideCount: 1, viaLocations: [], status: line.status, statusLabel: line.statusLabel,
+    fare: '₱13', estimatedFare: '₱13',
     path,
     sourceUrls: isOfficeDemo ? [...line.sourceUrls, from.addressSourceUrl] : line.sourceUrls, notes: line.notes, via: line.via,
     ...(isOfficeDemo ? { isDemo: true, status: 'DEMO_ILLUSTRATIVE', statusLabel: 'Demo journey', boarding: 'Near DICT Office · Carmen corridor' } : {}),
