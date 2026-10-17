@@ -104,7 +104,31 @@ export function parseRouteQuestion(value) {
 export function answerRouteQuestion(question, option) {
   const intent = parseRouteQuestion(question);
   const unavailable = info => `${info} information is unavailable for this sample route.`;
-  if (!option) return 'Choose a demo itinerary first so I can answer about its steps.';
+  if (!option) {
+    const text = normalize(question);
+    if (intent === 'unavailable' || /\b(fare|pamasahe|pila|cost|price|magkano)\b/.test(text)) {
+      return 'Estimated standard jeepney fare in Cagayan de Oro is ₱13. Discounted fare applies for students, senior citizens, and PWDs.';
+    }
+    if (/\b(centrio|ayala)\b/.test(text)) {
+      return 'Centrio Mall is accessible via jeepney lines like R1, R2, and C2 along Corrales Avenue and Claro M. Recto Avenue. Estimated fare: ₱13.';
+    }
+    if (/\b(limketkai|ketkai)\b/.test(text)) {
+      return 'Limketkai Center is served by Lapasan Highway jeepneys and C2 route lines. Estimated fare: ₱13.';
+    }
+    if (/\b(cogon)\b/.test(text)) {
+      return 'Cogon Market is one of CDO’s main public market transit hubs, connected by routes R1, C2, and eastbound/westbound lines. Estimated fare: ₱13.';
+    }
+    if (/\b(ustp)\b/.test(text)) {
+      return 'USTP CDO is located along Claro M. Recto Avenue (Highway). Jeepneys along the Lapasan and R1 corridors stop near the campus. Estimated fare: ₱13.';
+    }
+    if (/\b(divisoria)\b/.test(text)) {
+      return 'Divisoria is the central downtown hub. Most classic CDO jeepney lines pass through or loop at Divisoria. Estimated fare: ₱13.';
+    }
+    if (/\b(bulua)\b/.test(text)) {
+      return 'Bulua Westbound Terminal connects city jeepneys to provincial routes and western barangays. Estimated fare: ₱13.';
+    }
+    return 'Choose a demo itinerary first so I can answer about its steps and boarding points.';
+  }
   const demoNote = option.isDemo ? ' These are fictional, unverified demo instructions.'
     : ' These are sample instructions. Exact boarding and stopping points are not verified; confirm them with the driver.';
   if (intent === 'unavailable') return 'Verified fares, travel times, live vehicle locations, and fastest or cheapest comparisons are unavailable. I can explain the selected sample’s boarding, drop-off, transfers, or signboards.';

@@ -58,8 +58,8 @@ export function createExperience(hooks) {
     section.hidden = true;
     $('main').append(section);
   });
-  $('.site-header nav').insertAdjacentHTML('beforeend', `<a href="#jeepneys" data-main-nav="directory">${icon('jeep')}<span>Routes</span></a><a href="#my-trip" data-main-nav="mytrip">${icon('trip')}<span>My Trip</span></a>`);
-  document.body.insertAdjacentHTML('beforeend', `<nav class="bottom-nav" id="bottom-nav" aria-label="Main app navigation"><a href="#home" data-main-nav="home">${icon('home')}<span>Home</span></a><a href="#jeepneys" data-main-nav="directory">${icon('jeep')}<span>Routes</span></a><a href="#my-trip" data-main-nav="mytrip">${icon('trip')}<span>My Trip</span></a></nav><div class="details-action" id="details-action" hidden><span>ROUTE REFERENCE · MANUAL GUIDE</span><button class="primary-button" id="start-trip-guide">Start trip guide <span aria-hidden="true">→</span></button></div>`);
+  $('.site-header nav').insertAdjacentHTML('beforeend', `<a href="#jeepneys" data-main-nav="directory">${icon('jeep')}<span>Routes</span></a><a href="#my-trip" data-main-nav="mytrip">${icon('trip')}<span>My Trip</span></a><a href="#ai" data-main-nav="ai" class="header-ai-link"><span class="header-ai-sparkle">✨</span><span>Ask Routa</span></a>`);
+  document.body.insertAdjacentHTML('beforeend', `<nav class="bottom-nav" id="bottom-nav" aria-label="Main app navigation"><a href="#home" data-main-nav="home">${icon('home')}<span>Home</span></a><a href="#jeepneys" data-main-nav="directory">${icon('jeep')}<span>Routes</span></a><a href="#ai" data-main-nav="ai" class="nav-ai-tab"><span class="nav-ai-sparkle">✨</span><span>Ask Routa</span></a><a href="#my-trip" data-main-nav="mytrip">${icon('trip')}<span>My Trip</span></a></nav><div class="details-action" id="details-action" hidden><span>ROUTE REFERENCE · MANUAL GUIDE</span><button class="primary-button" id="start-trip-guide">Start trip guide <span aria-hidden="true">→</span></button></div>`);
   document.body.insertAdjacentHTML('beforeend', `<dialog id="destination-search" class="destination-search" aria-labelledby="search-title"><header class="search-header"><button type="button" class="search-back" aria-label="Back from destination search">${icon('arrow')}</button><h2 id="search-title">Where are you headed?</h2><span class="demo-pill">REFERENCE</span></header><div class="search-fields"><label for="search-origin">STARTING POINT</label><div class="search-origin-row"><input id="search-origin" readonly autocomplete="off" placeholder="Choose a starting landmark"><button type="button" id="search-swap" aria-label="Swap search locations">${icon('swap')}</button></div><label for="search-destination">DESTINATION</label><input id="search-destination" readonly autocomplete="off" placeholder="Search a CDO landmark"></div><div class="search-matches"><h3 id="search-list-title">CDO landmarks</h3><p id="search-no-match" role="status" hidden>Location not in demo yet. Choose a supported landmark below.</p><div id="search-location-list" aria-labelledby="search-list-title"></div></div><div class="search-bottom"><p id="search-help" role="status"></p><button type="button" class="primary-button" id="search-submit">Find my jeepney <span aria-hidden="true">→</span></button></div></dialog><dialog id="guide-confirm" class="guide-confirm" aria-labelledby="guide-confirm-title"><span class="eyebrow">YOUR JOURNEY</span><h2 id="guide-confirm-title"></h2><p id="guide-confirm-description"></p><div class="confirm-actions"><button type="button" class="secondary-button" id="confirm-cancel" autofocus>Keep guiding</button><button type="button" class="primary-button" id="confirm-accept">Save and leave</button></div></dialog>`);
   const searchDialog = $('#destination-search');
   const confirmDialog = $('#guide-confirm');
@@ -281,7 +281,16 @@ export function createExperience(hooks) {
 
   document.addEventListener('click', event => {
     const link = event.target.closest('[data-main-nav], [data-app-link]');
-    if (link) { event.preventDefault(); go(link.getAttribute('href')); }
+    if (link) {
+      if (link.dataset.mainNav === 'ai' || link.getAttribute('href') === '#ai') {
+        event.preventDefault();
+        event.stopPropagation();
+        hooks.openAI?.();
+        return;
+      }
+      event.preventDefault();
+      go(link.getAttribute('href'));
+    }
     const option = event.target.closest('[data-select-option]');
     if (option) {
       const selected = getTripOption(option.dataset.selectOption);
@@ -321,6 +330,7 @@ export function createExperience(hooks) {
     if (hash === '#jeepneys') { renderDirectory(); return true; }
     if (hash === '#my-trip') { renderMyTrip(); return true; }
     if (hash === '#guide') { renderGuide(); return true; }
+    if (hash === '#ai') { hooks.openAI?.(); return true; }
     let match = hash.match(/^#options\/([a-z]+)\/([a-z]+)$/);
     if (match && placeById(match[1]) && placeById(match[2])) { renderOptions(placeById(match[1]), placeById(match[2])); return true; }
     match = hash.match(/^#trip\/([a-z]+)\/([a-z]+)(?:\/([a-z0-9-]+))?$/);

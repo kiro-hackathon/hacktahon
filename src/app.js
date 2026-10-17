@@ -20,6 +20,7 @@ let resultMap;
 let emptyMap;
 let experience;
 let routaAI;
+let currentRouteOption = null;
 
 function resetLocation(message = 'Demo mode · choose a starting point and destination.') {
   locationRequest += 1;
@@ -50,7 +51,7 @@ function showScreen(name) {
   const previous = currentScreen;
   closeRideHandoff();
   routaAI?.close();
-  if (name !== 'result') { resultMap?.dispose(); resultMap = null; }
+  if (name !== 'result') { resultMap?.dispose(); resultMap = null; currentRouteOption = null; }
   if (name !== 'empty') { emptyMap?.dispose(); emptyMap = null; }
   screens.forEach(screen => { $(`#${screen}-screen`).hidden = screen !== name; });
   $('#home-trip-map').open = name === 'home';
@@ -160,6 +161,7 @@ function renderResult(route, focus = true) {
     <section class="journey-steps" aria-labelledby="steps-title"><h2 id="steps-title">Your journey, step by step</h2><p>From your first walk to your final stop.</p><ol class="timeline">${route.steps.map((step, i) => `<li><span class="step-icon">${icon(step.type)}</span><div class="step-body"><h3><span class="sr-only">Step ${i + 1}: </span>${escape(step.title)}</h3><strong>${escape(step.place)}</strong><p>${escape(step.detail)}</p></div></li>`).join('')}</ol></section></div>
     <aside class="journey-panel" aria-labelledby="diagram-title"><div class="eyebrow">THE BIG PICTURE</div><h2 id="diagram-title">A little less guesswork.</h2><p>See how the pieces of your sample trip connect.</p>${schematic(route)}<div class="diagram-legend"><span><i class="legend-walk"></i>Walk</span><span><i class="legend-ride"></i>Ride the jeepney</span></div><div class="diagram-disclaimer">${icon('info')}<span>A schematic, not a map. Stops and distances are illustrative. Don’t use this diagram for navigation.</span></div></aside></div>
     <p class="result-disclosure"><strong>${escape(route.statusLabel)}.</strong> Confirm the signboard, direction, and actual stops with the driver. Current service is not verified. ${route.sourceUrls.map((url, index) => `<a href="${escape(url)}" target="_blank" rel="noopener noreferrer">Source${index ? ` ${index + 1}` : ""} ↗</a>`).join(" · ")}</p>`;
+  currentRouteOption = route;
   showScreen('result');
   addRideOptions($('#result-screen .journey-steps'), { origin: route.from.name, destination: route.to.name });
   experience?.enhanceDetails(route);
@@ -327,6 +329,7 @@ presentHomeMap($('#home-trip-map'));
 homeMap = createTripMap($('#home-trip-map'));
 experience = createExperience({
   showScreen, showHome: () => showHome(false), renderDetails: renderResult, unsupported: renderEmpty,
+  openAI: () => routaAI?.open(currentRouteOption),
   formValues: () => ({ origin: origin.value, destination: destination.value, isGps: Boolean(currentPosition && origin.value === 'Current location') }),
   applyForm(values) {
     if (values.origin !== origin.value) resetLocation();
@@ -337,6 +340,7 @@ experience = createExperience({
 });
 routaAI = createRoutaAI({
   originValue: () => origin.value,
+  currentRoute: () => currentRouteOption,
   plan(from, to, preference) {
     experience.setPreference(preference || 'transfers');
     planTrip(from, to);

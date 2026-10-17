@@ -34,8 +34,19 @@ export function createRoutaAI(hooks) {
     <div class="assistant-questions" aria-label="Suggested questions">${['Where do I board?', 'Where do I get off?', 'Are there transfers?', 'What signboard should I look for?'].map(question => `<button type="button" data-routa-question="${question}">${question}</button>`).join('')}</div>
     <form id="routa-question-form" class="assistant-composer"><label class="sr-only" for="routa-question">Ask about this sample route</label><input id="routa-question" maxlength="300" autocomplete="off" placeholder="Ask about this sample route…"><button type="submit" aria-label="Send question">↑</button></form>
     <p class="assistant-disclosure" id="routa-assistant-disclosure">Local rules · Sample instructions, unverified stops.<br>No verified fares, travel times, or live tracking.</p>
-  </dialog>`);
+  </dialog>
+  <button type="button" id="floating-ai-button" class="floating-ai-circle" aria-label="Ask Routa AI" title="Ask Routa AI">
+    <span class="floating-ai-sparkle" aria-hidden="true">✨</span>
+    <span class="floating-ai-badge">AI</span>
+    <span class="floating-ai-tooltip">Ask Routa AI</span>
+  </button>`);
   const sheet = $('#routa-assistant');
+  const floatingBtn = $('#floating-ai-button');
+  floatingBtn?.addEventListener('click', event => {
+    event.preventDefault();
+    event.stopPropagation();
+    open(selectedRoute || hooks.currentRoute?.() || null, floatingBtn);
+  });
 
   function clearPreview() {
     request = null;
@@ -90,20 +101,41 @@ export function createRoutaAI(hooks) {
     if (!sheet.open) return;
     const viewport = window.visualViewport;
     sheet.style.setProperty('--assistant-viewport', `${viewport?.height || innerHeight}px`);
-    sheet.style.top = `${viewport?.offsetTop || 0}px`;
-    sheet.style.bottom = 'auto';
-    sheet.style.marginTop = `${Math.max(8, (viewport?.height || innerHeight) - sheet.getBoundingClientRect().height)}px`;
+    if (window.innerWidth <= 760) {
+      sheet.style.top = 'auto';
+      sheet.style.bottom = '0px';
+      sheet.style.marginTop = '0px';
+    } else {
+      sheet.style.top = `${viewport?.offsetTop || 0}px`;
+      sheet.style.bottom = 'auto';
+      sheet.style.marginTop = `${Math.max(8, (viewport?.height || innerHeight) - sheet.getBoundingClientRect().height)}px`;
+    }
     // Keep the latest reply visible when keyboard space changes the transcript height.
     requestAnimationFrame(() => { $('#routa-messages').scrollTop = $('#routa-messages').scrollHeight; });
   }
   function close() { if (sheet.open) sheet.close(); }
-  function open(option, trigger) {
+  function open(option = null, trigger = null) {
     selectedRoute = option; returnFocus = trigger;
     $('#routa-messages').replaceChildren();
     $('#routa-question').value = '';
-    $('#routa-assistant-context').textContent = `${option.code} · ${option.from.short} → ${option.to.short}`;
-    bubble('I can explain this selected sample’s boarding point, drop-off, transfers, and signboards. What would you like to know?', 'Routa');
-    sheet.showModal(); document.body.classList.add('assistant-open');
+    const suggestedEl = sheet.querySelector('.assistant-questions');
+    if (option) {
+      $('#routa-assistant-context').textContent = `${option.code} · ${option.from.short} → ${option.to.short}`;
+      bubble('I can explain this selected sample’s boarding point, drop-off, transfers, and signboards. What would you like to know?', 'Routa');
+      if (suggestedEl) {
+        suggestedEl.innerHTML = ['Where do I board?', 'Where do I get off?', 'Are there transfers?', 'What signboard should I look for?'].map(question => `<button type="button" data-routa-question="${question}">${question}</button>`).join('');
+      }
+      $('#routa-question').placeholder = 'Ask about this sample route…';
+    } else {
+      $('#routa-assistant-context').textContent = 'Cagayan de Oro Jeepney AI Assistant';
+      bubble('Hello! I’m Routa, your CDO jeepney assistant. Ask me about fares (₱13 est.), major hubs, or select a route in the planner for step-by-step guidance!', 'Routa');
+      if (suggestedEl) {
+        suggestedEl.innerHTML = ['What is the fare?', 'How do I get to Centrio?', 'Where is Cogon Market?', 'Which jeepney to USTP?'].map(question => `<button type="button" data-routa-question="${question}">${question}</button>`).join('');
+      }
+      $('#routa-question').placeholder = 'Ask Routa about jeepneys, fares, landmarks…';
+    }
+    if (!sheet.open) sheet.showModal();
+    document.body.classList.add('assistant-open');
     resizeSheet(); $('#routa-assistant-close').focus({ preventScroll: true });
   }
   $('#routa-assistant-close').addEventListener('click', close);
@@ -114,7 +146,12 @@ export function createRoutaAI(hooks) {
   });
   sheet.addEventListener('click', event => {
     const question = event.target.closest('[data-routa-question]');
-    if (question) ask(question.dataset.routaQuestion);
+    if (question) {
+      event.preventDefault();
+      event.stopPropagation();
+      ask(question.dataset.routaQuestion);
+      return;
+    }
     if (event.target !== sheet) return;
     const rect = sheet.getBoundingClientRect();
     if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) close();
@@ -125,11 +162,16 @@ export function createRoutaAI(hooks) {
   window.visualViewport?.addEventListener('scroll', resizeSheet);
   return {
     close,
+    open,
     attach(option) {
       const panel = document.createElement('div'); panel.className = 'ask-routa-panel';
-      panel.innerHTML = '<div><strong>A question about this trip?</strong><small>Prototype assistant · Uses these sample steps</small></div><button type="button" id="ask-routa" aria-haspopup="dialog">Ask Routa <span aria-hidden="true">↗</span></button>';
+      panel.innerHTML = '<div><strong><span class="ai-sparkle">✨</span> A question about this trip?</strong><small>Ask Routa AI · Uses these sample steps</small></div><button type="button" id="ask-routa" aria-haspopup="dialog"><span aria-hidden="true">✨</span> Ask Routa <span aria-hidden="true">↗</span></button>';
       $('#result-screen .trip-signboard').insertAdjacentElement('afterend', panel);
-      panel.querySelector('button').addEventListener('click', event => open(option, event.currentTarget));
+      panel.querySelector('button').addEventListener('click', event => {
+        event.preventDefault();
+        event.stopPropagation();
+        open(option, event.currentTarget);
+      });
     },
   };
 }
