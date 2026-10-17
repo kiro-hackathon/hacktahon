@@ -10,7 +10,7 @@ export function createRoutaAI(hooks) {
   let returnFocus;
   let awaitingOrigin = false;
 
-  $('#trip-form').insertAdjacentHTML('afterend', `<details class="smart-search" id="smart-search">
+  $('#trip-form').insertAdjacentHTML('afterend', `<details class="smart-search" id="smart-search" hidden style="display: none;">
     <summary><span><strong>Try a sample trip</strong><small>Browse ready-made routes</small></span><span class="ai-concept">DEMO</span></summary>
     <div class="smart-search-content"><form id="smart-trip-form" novalidate>
       <label for="smart-trip-input">Where would you like to go?</label>

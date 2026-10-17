@@ -1,6 +1,8 @@
 /** Corridor references from the supplied October 2026 research, not live navigation. */
 import { locations } from './locations.js';
+import { roadPaths, getRoadPath, findNearestRoadPath } from './road-paths.js';
 export { locations } from './locations.js';
+export { roadPaths, getRoadPath, findNearestRoadPath } from './road-paths.js';
 const base = 'https://ph.commutetour.com/ph/routes/cdo-routes/';
 const thread = 'https://www.reddit.com/r/cagayandeoro/comments/zju4tl/';
 export const routeWarning = 'Confirm the signboard, direction, and boarding point with the driver. Routes may vary.';
@@ -10,21 +12,25 @@ export const routeWarning = 'Confirm the signboard, direction, and boarding poin
 export const routes = [
   { id: 'legacy-r1-gaisano-carmen', code: 'R1', name: 'Gaisano / Carmen loop', from: 'gaisano', to: 'carmen',
     via: 'Gaisano · Kauswagan / Liceo · Carmen Market · City Hall / Divisoria · Centrio',
+    path: roadPaths['divisoria-centrio'],
     sourceUrls: [`${base}cdo-r1-gaisano-carmen-jeep-route/`],
     notes: 'Toward Carmen via Kauswagan / Liceo, then downtown and Centrio. Cogon / Limketkai variants need driver confirmation. R2 follows the opposite loop.',
     pairs: [['gaisano', 'carmen'], ['gaisano', 'divisoria'], ['carmen', 'divisoria'], ['carmen', 'centrio'], ['divisoria', 'centrio'], ['dict', 'centrio'], ['dict', 'divisoria'], ['dict', 'gaisano']] },
   { id: 'legacy-r2-gaisano-agora-cogon-carmen', code: 'R2', name: 'Gaisano / Agora / Cogon / Carmen loop', from: 'gaisano', to: 'carmen',
     via: 'Gaisano · Centrio · SM Downtown · Agora · Limketkai · Cogon · Divisoria · Carmen',
+    path: [...roadPaths['centrio-sm'], ...roadPaths['sm-limketkai'].slice(1), ...roadPaths['limketkai-cogon'].slice(1), ...roadPaths['cogon-divisoria'].slice(1)],
     sourceUrls: [`${base}cdo-r2-gaisano-agora-cogon-carmen-jeep-route/`],
     notes: 'Toward Agora / Limketkai, then Cogon, downtown and Carmen. Generally the opposite loop to R1; confirm the unit’s destination.',
     pairs: [['gaisano', 'cogon'], ['gaisano', 'carmen'], ['centrio', 'cogon'], ['centrio', 'divisoria'], ['sm', 'cogon'], ['sm', 'divisoria'], ['agora', 'carmen'], ['limketkai', 'cogon'], ['cogon', 'divisoria'], ['cogon', 'carmen']] },
   { id: 'legacy-c2-patag-ketkai', code: 'C2', name: 'Patag / Carmen / Ketkai', from: 'patag', to: 'limketkai',
     via: 'Patag / Camp Evangelista · Liceo · Marcos Bridge · Gaisano / Centrio · USTP highway · Limketkai',
+    path: roadPaths['ustp-limketkai'],
     sourceUrls: ['https://www.reddit.com/r/cagayandeoro/comments/1ib619o/', thread],
     notes: 'Uses the highway / USTP area toward Ketkai. Confirm where to board near campus and whether the unit continues to Limketkai. Directional diversions vary.',
     pairs: [['patag', 'limketkai'], ['patag', 'ustp'], ['liceo', 'ustp'], ['gaisano', 'limketkai'], ['ustp', 'limketkai']] },
   { id: 'legacy-b3-bulua-ketkai-highway', code: 'B3', name: 'Bulua / Gaisano / Ketkai', from: 'bulua', to: 'limketkai',
     via: 'Bulua Highway · Kauswagan · Gaisano · USTP / Lapasan highway · Limketkai',
+    path: roadPaths['ustp-limketkai'],
     sourceUrls: ['https://www.reddit.com/r/cagayandeoro/comments/1nqoek6/', thread],
     notes: 'Via C.M. Recto / National Highway. Bulua means the highway corridor, not guaranteed entry into Westbound Terminal. Ask if the unit continues to Ketkai.',
     pairs: [['bulua', 'gaisano'], ['bulua', 'limketkai'], ['gaisano', 'limketkai'], ['ustp', 'limketkai'], ['limketkai', 'bulua']] },
@@ -57,12 +63,14 @@ export const jeepneyLines = routes.map(line => ({
     id: `${originId}-${destinationId}`, originId, destinationId,
     signboard: `${line.code} · ${placeById(destinationId).short}`,
     orderedStops: [originId, destinationId], // Endpoints only, not validated stops.
+    path: getRoadPath(originId, destinationId),
   })),
 }));
 function makeOption(line, direction) {
   const from = placeById(direction.originId);
   const to = placeById(direction.destinationId);
   const id = `${line.id}-${direction.id}`;
+  const path = direction.path || getRoadPath(from.id, to.id) || null;
   const steps = [
     { type: 'walk', title: 'Confirm where to board', place: `${from.short} area`, detail: `Ask locally for the ${line.code} boarding point toward ${to.short}. The landmark is a reference, not a verified jeepney stop.`, guideTitle: 'Find the boarding point', action: "I've confirmed the boarding point" },
     { type: 'jeep', title: `Look for ${line.code}`, place: direction.signboard, detail: `Ask the driver if this unit passes ${to.name} before boarding. ${line.notes}`, guideTitle: `Confirm the ${line.code} signboard`, action: "I've confirmed and boarded" },
@@ -82,6 +90,7 @@ function makeOption(line, direction) {
     description: `${line.code} corridor reference. Confirm this trip with the driver.`, signboard: direction.signboard,
     boarding: `${from.short} area · confirm locally`, dropoff: `${to.short} area · ask driver`,
     transferCount: 0, rideCount: 1, viaLocations: [], status: line.status, statusLabel: line.statusLabel,
+    path,
     sourceUrls: isOfficeDemo ? [...line.sourceUrls, from.addressSourceUrl] : line.sourceUrls, notes: line.notes, via: line.via,
     ...(isOfficeDemo ? { isDemo: true, status: 'DEMO_ILLUSTRATIVE', statusLabel: 'Demo journey', boarding: 'Near DICT Office · Carmen corridor' } : {}),
     steps: steps.map((item, index) => ({ ...item, description: item.detail, locationId: index < 2 ? from.id : to.id, id: `${id}-step-${index + 1}` })),

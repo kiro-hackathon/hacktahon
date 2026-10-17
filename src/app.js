@@ -40,7 +40,8 @@ function selectedOrigin() {
 function updateHomeMap() {
   const from = selectedOrigin();
   const to = resolveLocation(destination.value);
-  homeMap?.update({ from, to, connection: Boolean(from && to && findRoute(from.id, to.id)) });
+  const route = from && to ? findRoute(from.id, to.id) : null;
+  homeMap?.update({ from, to, route, path: route?.path, connection: Boolean(from && to && route) });
 }
 
 function announce(message) { $('#announcer').textContent = message; }
@@ -98,7 +99,16 @@ function updateShortcuts() {
   const selected = demoSelection(resolveLocation(origin.value)?.id, resolveLocation(destination.value)?.id);
   origin.value = selected.from.name;
   destination.value = selected.to.name;
-  const choices = getDemoDestinations(selected.from.id);
+  const popularFallbacks = ['divisoria', 'centrio', 'limketkai', 'cogon', 'sm', 'ustp']
+    .map(id => locations.find(place => place.id === id))
+    .filter(place => place && place.id !== selected.from.id);
+  const choices = getDemoDestinations(selected.from.id).filter(place => place.id !== 'bulua');
+  for (const fallback of popularFallbacks) {
+    if (choices.length >= 3) break;
+    if (!choices.some(c => c.id === fallback.id)) {
+      choices.push(fallback);
+    }
+  }
   $('#popular-destinations').innerHTML = choices.slice(0, 3).map(place => `<button type="button" class="destination-card" data-destination="${place.id}" aria-pressed="${place.id === selected.to.id}" aria-label="Set destination to ${escape(place.name)}"><span class="place-icon">${icon(place.icon)}</span><span class="place-arrow" aria-hidden="true">${icon('arrowRight')}</span><strong>${escape(place.short)}</strong><small>${escape(place.category)}</small></button>`).join('');
   $('#swap-button').hidden = !findRoute(selected.to.id, selected.from.id);
   updateHomeMap();
@@ -156,7 +166,7 @@ function renderResult(route, focus = true) {
   routaAI?.attach(route);
   const panel = $('#result-screen .journey-panel');
   panel.querySelector('.schematic').insertAdjacentHTML('beforebegin', mapMarkup('result-trip-map'));
-  resultMap = createTripMap($('#result-trip-map'), { from: route.from, to: route.to, via: route.viaLocations, connection: true });
+  resultMap = createTripMap($('#result-trip-map'), { from: route.from, to: route.to, via: route.viaLocations, route, path: route.path, connection: true });
   document.title = `${route.from.short} to ${route.to.short} — Route reference | RoutaCagayan`;
   if (focus) $('#result-title').focus({ preventScroll: true });
   announce(`${route.code} corridor reference found. ${route.from.name} to ${route.to.name}. ${route.steps.length} journey steps.`);

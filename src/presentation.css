@@ -15,7 +15,7 @@ dialog.launch-splash { position: fixed; inset: 0; width: 100%; height: 100%; max
 .launch-splash.is-leaving { animation: launch-exit 200ms ease-out forwards; }
 .is-launched main { animation: app-arrive 380ms cubic-bezier(.22, 1, .36, 1) both; }
 
-.home-screen .home-grid { grid-template-columns: minmax(0, 1.3fr) minmax(320px, .9fr); gap: 0; align-items: stretch; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; overflow: hidden; }
+.home-screen .home-grid { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(320px, .9fr); gap: 0; align-items: stretch; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; overflow: hidden; }
 .home-screen .explore-panel { display: none; }
 .home-screen .planner-column { padding: 30px; max-width: none; min-width: 0; }
 .home-screen #home-title { font-size: 31px; line-height: 1.2; letter-spacing: -1.3px; margin-top: 10px; }

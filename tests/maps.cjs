@@ -56,7 +56,7 @@ const tile = '<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><
     await page.getByRole('button', { name: 'Origin: USTP CDO', exact: true }).waitFor({ state: 'visible' });
     assert.ok(await page.getByRole('button', { name: 'Origin: USTP CDO', exact: true }).isVisible());
     assert.ok(await page.getByRole('button', { name: 'Destination: Divisoria', exact: true }).isVisible());
-    assert.match(await page.locator('#home-trip-map .map-connection-note').innerText(), /straight line, not a verified/);
+    assert.match(await page.locator('#home-trip-map .map-connection-note').innerText(), /(straight line|road corridor), not a verified/);
     assert.equal(await page.evaluate(() => { let count = 0; window.__maps[0].eachLayer(layer => { if (layer instanceof L.Polyline) count++; }); return count; }), 1);
     await findAndSelect(page);
     assert.match(await page.locator('.route-badge').innerText(), /D1/);

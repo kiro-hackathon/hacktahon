@@ -2,6 +2,7 @@ import { locations, jeepneyLines, getTripOptions, getTripOption, placeById, reso
 import { createTripMap, mapMarkup } from './map.js';
 import { rankTripOptions } from './routa-intelligence.js';
 import { icon } from './icons.js';
+import { addRideOptions } from './ride-handoff.js';
 
 const storageKey = 'routacagayan.demo.v1';
 const esc = value => String(value).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
@@ -102,6 +103,7 @@ export function createExperience(hooks) {
     }));
     updateRanking();
     viewMap = createTripMap($('#options-map'), { from, to, connection: false });
+    addRideOptions($('#options-screen .options-layout'), { origin: from.name, destination: to.name });
   }
   function openOptions(from, to, push = true) {
     rememberSearch(from, to);
@@ -139,7 +141,7 @@ export function createExperience(hooks) {
     const option = getTripOptions(direction.originId, direction.destinationId).find(option => option.lineIds.includes(line.id));
     show('line', `${heading(`${line.code} <span class="title-demo">REFERENCE</span>`, esc(line.name), '#jeepneys')}<div class="line-layout"><div><label class="directory-label" for="line-direction">TRIP / DIRECTION TO CONFIRM</label><select id="line-direction">${line.directions.map(dir => `<option value="${dir.id}" ${dir.id === direction.id ? 'selected' : ''}>${esc(placeById(dir.originId).short)} → ${esc(placeById(dir.destinationId).short)}</option>`).join('')}</select><div class="trip-signboard"><span>SIGNBOARD TO CONFIRM</span><strong>${esc(direction.signboard)}</strong><p>${esc(line.notes)}</p></div><h2 class="small-section-title">Corridor highlights</h2><p class="app-subtitle">${esc(line.via)}</p><ol class="line-stops">${direction.orderedStops.map((id, index) => `<li><span>${index + 1}</span><div><strong>${esc(placeById(id).name)}</strong><small>${index === 0 ? 'Starting area' : 'Destination area'} · confirm actual stop locally</small></div></li>`).join('')}</ol><button type="button" class="primary-button" data-plan-line="${option.id}">Plan this trip <span aria-hidden="true">→</span></button>${sources(option)}${disclosure}</div><aside>${mapMarkup('line-map', 'Explore these landmarks')}</aside></div>`, `${line.code} route reference`);
     $('#line-direction').addEventListener('change', event => go(`#line/${line.id}/${event.target.value}`, true));
-    viewMap = createTripMap($('#line-map'), { from: option.from, to: option.to, connection: true });
+    viewMap = createTripMap($('#line-map'), { from: option.from, to: option.to, route: option, path: option.path, connection: true });
   }
   function renderMyTrip() {
     const active = state.activeTrip;

@@ -1,4 +1,5 @@
 import { locations, mapConfig } from './locations.js';
+import { getRoadPath, findNearestRoadPath } from './road-paths.js';
 
 /** Optional maps are lazy: hidden sections never request tiles. */
 export function createTripMap(section, initial = {}) {
@@ -56,7 +57,7 @@ export function createTripMap(section, initial = {}) {
   function draw() {
     if (!map || disposed) return;
     group.clearLayers();
-    const { from, to, via = [], connection = false } = state;
+    const { from, to, via = [], connection = false, path } = state;
     const selected = new Set([from?.id, to?.id, ...via.map(place => place.id)]);
     locations.filter(place => place.coordinates && !selected.has(place.id)).forEach(place => marker(place));
     if (from?.coordinates) marker(from, 'Origin');
@@ -65,19 +66,38 @@ export function createTripMap(section, initial = {}) {
     if (from?.id === 'current' && Number.isFinite(from.accuracy) && from.accuracy > 0) {
       L.circle(from.coordinates, { radius: from.accuracy, color: '#147d76', weight: 1, fillOpacity: 0.07, interactive: false }).addTo(group);
     }
+    let roadPoints = null;
     if (connection && from?.coordinates && to?.coordinates && via.every(place => place.coordinates)) {
-      L.polyline([from.coordinates, ...via.map(place => place.coordinates), to.coordinates], { color: '#147d76', weight: 4, dashArray: '7 9', interactive: false }).addTo(group);
+      if (!path && via.length > 0) {
+        const segments = [];
+        const stops = [from, ...via, to];
+        for (let i = 0; i < stops.length - 1; i++) {
+          const seg = (stops[i]?.id && stops[i + 1]?.id ? getRoadPath(stops[i].id, stops[i + 1].id) : null) || findNearestRoadPath(stops[i], stops[i + 1]);
+          if (seg) {
+            if (segments.length > 0) segments.push(...seg.slice(1));
+            else segments.push(...seg);
+          }
+        }
+        if (segments.length > 0) roadPoints = segments;
+      }
+      if (!roadPoints) {
+        roadPoints = path || (from?.id && to?.id ? getRoadPath(from.id, to.id) : null) || findNearestRoadPath(from, to) || [from.coordinates, ...via.map(place => place.coordinates), to.coordinates];
+      }
+      L.polyline(roadPoints, { color: '#147d76', weight: 4, dashArray: '7 9', interactive: false }).addTo(group);
     }
     section.querySelector('.map-connection-note').textContent = [from, ...via, to].some(place => place && !place.coordinates)
       ? 'Some route areas have no verified map point yet. Only sourced landmarks are shown; no route path is mapped.'
       : connection
-      ? 'Approximate / not for navigation · straight line, not a verified jeepney road route.'
+      ? 'Approximate / not for navigation · road corridor preview, not a verified jeepney road route.'
       : from?.id === 'current'
         ? 'GPS position and destination only · no live jeepney routing.'
         : 'Landmark locations only · no live jeepney routing or road directions.';
     const points = [from, ...via, to].filter(place => place?.coordinates).map(place => place.coordinates);
     map.invalidateSize({ pan: false });
-    if (points.length > 1) map.fitBounds(points, { padding: [40, 40], maxZoom: 16, animate: false });
+    if (points.length > 1) {
+      const fitCoords = (roadPoints && roadPoints.length > 1) ? roadPoints : points;
+      map.fitBounds(fitCoords, { padding: [40, 40], maxZoom: 16, animate: false });
+    }
     else if (points.length && from?.id === 'current') map.setView(points[0], 14, { animate: false });
     else if (points.length) map.fitBounds(locations.filter(place => place.coordinates).map(place => place.coordinates), { padding: [35, 35], maxZoom: 15, animate: false });
     else map.setView(mapConfig.center, mapConfig.zoom, { animate: false });

@@ -1,5 +1,5 @@
 /* Routa AI stays inside the planner's existing palette, type and spacing system. */
-.smart-search { margin-top: 18px; border-block: 1px solid var(--line); }
+.smart-search { display: none !important; margin-top: 18px; border-block: 1px solid var(--line); }
 .smart-search summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; cursor: pointer; padding: 15px 0; list-style: none; }
 .smart-search summary::-webkit-details-marker { display: none; }
 .smart-search summary:focus-visible { outline: 3px solid var(--teal); outline-offset: 3px; border-radius: 4px; }

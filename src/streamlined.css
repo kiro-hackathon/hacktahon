@@ -33,13 +33,15 @@
   right: 11px;
 }
 
-body[data-screen="home"] main {
-  max-width: 820px;
-  padding-top: 34px;
-}
+@media (max-width: 760px) {
+  body[data-screen="home"] main {
+    max-width: 820px;
+    padding-top: 34px;
+  }
 
-.home-grid {
-  display: block;
+  .home-grid {
+    display: block;
+  }
 }
 
 .planner-column {
