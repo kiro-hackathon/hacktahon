@@ -6,6 +6,8 @@ Implemented the requested three-second centered Routa logo intro, map-first Home
 
 Current focused verification: `tests/presentation.cjs` — **9 passing groups**, exit 0; `tests/routa-intelligence.cjs` — **7 passing logic groups**, exit 0. Phone widths: 360/390/430px; desktop: 1280px; short viewport: 390×450. Actual results, screenshots, data limitations, and the presentation walkthrough: [app presentation report](../.design/app-presentation-report.md).
 
+Final regression: `tests/routes-research.cjs` — **11 passing groups**, exit 0, with all 33 references, 30 supported pairs, 30 AI presets, guide refresh/completion, unsupported-link recovery, and 320–1440px responsive coverage. No browser exceptions. Total for this update: **27 passing check groups** across the three suites. Syntax and diff-whitespace checks passed.
+
 ## Historical implementation notes
 
 The notes below describe earlier D-series builds. Current route data and default selection are documented in README.md and the current report above; older totals and fictional-line descriptions are not current regression results.

@@ -28,6 +28,8 @@ The picker enters in 280 ms; a different trip screen enters in 340 ms. The guide
 
 `node tests/routa-intelligence.cjs` also passed all seven logic groups, including route-specific answers for all 33 configured itineraries, unknown-input fallback, and deterministic preferences. Syntax checks passed for the edited JavaScript files; `git diff --check` passed.
 
+The final `node tests/routes-research.cjs` run passed all **11 groups**, exit 0: all 33 itinerary deep links, all 30 supported origin/destination pairs, all 30 AI presets, directory filters/directions, guide refresh and completion, unsourced-map-point handling, old unsupported-link recovery, and Home/options/directory/line/results/DICT layouts at 320, 360, 390, 430, 768, and 1440px. No browser exceptions. Its helper now waits for the launch to finish after navigation and explicit reloads before reading visible content. [Full regression results](../.hackathon/route-research-results.json).
+
 Evidence: [focused results](../.hackathon/presentation-results.json), [mobile and desktop screenshots](../.hackathon/presentation-screenshots/). Automated map requests use explicit SVG test tiles, identified as QA fixtures in screenshots. One live OpenStreetMap Home view was separately rendered and visually reviewed; [live map preview](../.hackathon/map-home-preview.png) was captured before the final compact-spacing adjustment. No tiles were downloaded for offline use.
 
 ## Usability improvements

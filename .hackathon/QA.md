@@ -6,6 +6,8 @@
 
 `node tests/routa-intelligence.cjs`: **7 logic groups passed**, including answers for all 33 configured itineraries. Syntax checks and `git diff --check` passed. The browser suite uses local SVG map fixtures; one live OSM view was separately visually reviewed. Physical devices, Safari/Firefox, screen readers, and actual notch behavior remain untested.
 
+Final `node tests/routes-research.cjs`: **11 groups passed**, exit 0. All 33 reference deep links, 30 supported pairs, 30 AI presets, directory filtering/directions, guide refresh/completion, unknown/unsupported-link recovery, and six-width reflow at 320/360/390/430/768/1440px passed. No browser exceptions. [Results](route-research-results.json). The harness waits for the intro after explicit reloads before asserting visible guide text. Combined executed total for this update: **27 check groups**.
+
 Usability changes: map and trip sheet replace the oversized hero; the main action appears before the secondary demo reset; taps complete before opening the moving picker; fixed guide actions are excluded from transformed containers. No new booking or location permissions are requested.
 
 The earlier audit records below concern previous app/data versions. Their D-series fixture counts and GPS workflow are historical; current researched signboards and curated selection behavior are documented in README.md.
