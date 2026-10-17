@@ -1,0 +1,21 @@
+# RoutaCagayan
+Student commuters choose two Cagayan de Oro landmarks and understand a fictional jeepney journey in four steps.
+
+Stack: static HTML, CSS, ES modules; no build, dependencies, or network services.
+Scope: trip search with accessible suggestions; curated recommendations; four-step instructions and schematic.
+Out of scope: real navigation, GPS, verified route data, fares, times, accounts, backend, AI models.
+Visual direction: transit teal, warm off-white, amber route signage, original SVG jeepney, mobile-first planner.
+
+Acceptance:
+- Given USTP and Divisoria, searching displays D1 with matching endpoints.
+- Given a sample route, all four steps match the direction selected.
+- Given empty, unknown, or identical places, show actionable validation and preserve inputs.
+- Given unsupported Centrio → Cogon, explain coverage and offer working example trips.
+- Given 375px and 390px viewports, the workflow has no horizontal overflow.
+
+Research (2026-10-17): landmark identities only; no route facts established.
+- USTP: https://www.ustp.edu.ph/cdeo/
+- Centrio: https://www.ayalamalls.com/explore/ayala-centrio/store/AYALA-CENTRIO-1435180
+- SM: https://www.smprime.com/latest_news/manila-bulletin-sms-premier-mall-opens-in-downtown-cdo-on-may-12/
+All D-series routes, stops, and directions are fictional. Other landmark names are supplied by the brief.
+The user's 60-minute limit overrides the bundled three-hour schedule.

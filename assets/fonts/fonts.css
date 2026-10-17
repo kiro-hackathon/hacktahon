@@ -1,0 +1,8 @@
+/* Manrope by Mikhail Sharanda and Mirko Velimirovic; SIL Open Font License. */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url('./Manrope-Variable.ttf') format('truetype');
+}
