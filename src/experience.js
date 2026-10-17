@@ -257,7 +257,9 @@ export function createExperience(hooks) {
     $(`#${field}`).addEventListener('keydown', event => {
       if (['Enter', ' ', 'ArrowDown', 'ArrowUp'].includes(event.key)) { event.preventDefault(); openSearch(field); }
     });
-    $(`#${field}`).addEventListener('pointerdown', event => {
+    // Finish the tap before introducing an animated modal. Opening on pointerdown
+    // can place a new control beneath the pointer before its release/click.
+    $(`#${field}`).addEventListener('click', event => {
       event.preventDefault(); openSearch(field);
     });
   });

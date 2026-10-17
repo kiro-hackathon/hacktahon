@@ -4,6 +4,7 @@ import { createTripMap, mapMarkup } from './map.js';
 import { addRideOptions, closeRideHandoff } from './ride-handoff.js';
 import { createExperience } from './experience.js';
 import { createRoutaAI } from './routa-ai.js';
+import { animateScreen, presentHomeMap } from './presentation.js';
 
 const $ = selector => document.querySelector(selector);
 const escape = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
@@ -61,15 +62,18 @@ function updateHomeMap() {
 function announce(message) { $('#announcer').textContent = message; }
 
 function showScreen(name) {
+  const previous = currentScreen;
   closeRideHandoff();
   routaAI?.close();
   if (name !== 'result') { resultMap?.dispose(); resultMap = null; }
   if (name !== 'empty') { emptyMap?.dispose(); emptyMap = null; }
   screens.forEach(screen => { $(`#${screen}-screen`).hidden = screen !== name; });
+  $('#home-trip-map').open = name === 'home';
   currentScreen = name;
   experience?.onScreen(name);
   closeSuggestions();
   window.scrollTo({ top: 0, behavior: 'instant' });
+  animateScreen(name, previous);
 }
 
 function showHome(focus = true) {
@@ -325,6 +329,7 @@ document.addEventListener('click', event => {
 });
 
 $('#home-map-slot').innerHTML = mapMarkup('home-trip-map', 'Explore Cagayan de Oro');
+presentHomeMap($('#home-trip-map'));
 homeMap = createTripMap($('#home-trip-map'));
 experience = createExperience({
   showScreen, showHome: () => showHome(false), renderDetails: renderResult, unsupported: renderEmpty,

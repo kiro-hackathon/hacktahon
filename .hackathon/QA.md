@@ -1,5 +1,15 @@
 # QA — October 17, 2026
 
+## Current map-first app presentation
+
+`node tests/presentation.cjs`: **9 groups passed**, exit 0. The tests measure the actual three-second intro, complete the manual arrival flow at 360/390/430px, test repeated taps and Back, confirm provider URLs/cancel behavior, expand the map, submit from a 390×450 viewport, check reduced motion, inspect desktop at 1280px, and abort map tiles to verify recovery. No browser exceptions. [Results](presentation-results.json), [screenshots](presentation-screenshots/), [full report and walkthrough](../.design/app-presentation-report.md).
+
+`node tests/routa-intelligence.cjs`: **7 logic groups passed**, including answers for all 33 configured itineraries. Syntax checks and `git diff --check` passed. The browser suite uses local SVG map fixtures; one live OSM view was separately visually reviewed. Physical devices, Safari/Firefox, screen readers, and actual notch behavior remain untested.
+
+Usability changes: map and trip sheet replace the oversized hero; the main action appears before the secondary demo reset; taps complete before opening the moving picker; fixed guide actions are excluded from transformed containers. No new booking or location permissions are requested.
+
+The earlier audit records below concern previous app/data versions. Their D-series fixture counts and GPS workflow are historical; current researched signboards and curated selection behavior are documented in README.md.
+
 ## Executed
 
 Environment: Windows, Python 3.14 static HTTP server, installed Google Chrome controlled by bundled Playwright. No application packages installed.

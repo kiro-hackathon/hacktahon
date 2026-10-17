@@ -12,9 +12,11 @@ python -m http.server 8080 --bind 127.0.0.1
 
 Open [http://127.0.0.1:8080](http://127.0.0.1:8080). On Windows, `py -m http.server 8080 --bind 127.0.0.1` is an alternative if Python uses the `py` launcher. Stop with Ctrl+C. Any static HTTP server will also work.
 
-There is **no installation or build step** and no environment variables. Serve over HTTP rather than opening `index.html` directly, because the app uses JavaScript modules. All code, Leaflet 1.9.4, illustrations, and the font are bundled locally. The planner and illustrated journey work without internet; **interactive OpenStreetMap tiles require a connection** and gracefully fall back if unavailable. Maps load only when opened. This is not an installable offline PWA.
+There is **no installation or build step** and no environment variables. Serve over HTTP rather than opening `index.html` directly, because the app uses JavaScript modules. All code, Leaflet 1.9.4, illustrations, and the font are bundled locally. The planner and illustrated journey work without internet; **interactive OpenStreetMap tiles require a connection** and gracefully fall back if unavailable. Home opens its map automatically; maps on other screens load when opened. This is not an installable offline PWA.
 
 ## Try the demo
+
+Each page load starts with a three-second RoutaCagayan logo intro, then reveals a map-first Home with a compact trip sheet. Navigating within the app does not repeat the intro. Destination selection opens a sheet, and results enter with a short transition. Reduced-motion preferences disable movement without changing the intro timing. These are presentation effects, not simulated route calculation or tracking.
 
 1. Start with **DICT Office → Centrio** and tap **Find my jeepney** for a sample R1 Gaisano / Carmen loop journey.
 2. Open the result, follow the nearby boarding step, and complete the four-step manual guide.
@@ -25,7 +27,7 @@ The planner uses selection-only fields on mobile and desktop. Every offered orig
 
 ## Map and demo location
 
-- Open **Explore Cagayan de Oro** under the home planner, or **Explore this trip on a map** in the result’s existing illustrated panel. Drag to pan, use +/− to zoom, or choose Expand map. A/B markers identify origin/destination. The original illustration and timeline remain available.
+- Home displays the CDO landmark map immediately, with **GPS off** beside its title. **About this map** contains accuracy and privacy notes. On results, open **Explore this trip on a map** in the illustrated panel. Drag to pan, use +/− to zoom, or choose Expand map. A/B markers identify mapped origin/destination points; unsourced places have no invented marker. The result illustration and timeline remain available.
 - **Start at DICT Office** explicitly selects the demo starting point. Arbitrary GPS entry is hidden in this demo; the button does not detect location.
 - DICT Office is listed on Villarin Street, Carmen in the [DICT 2025 Citizen’s Charter](https://cms-cdn.e.gov.ph/DICT/pdf/DICT-Citizens-Charter-2025-1st-Edition.pdf). Three R1 options are labeled **Demo journey** and illustrate walking to a nearby Carmen boarding corridor. They do not claim a verified stop outside the office. No office coordinates or walking geometry are invented.
 - Maps show only sourced landmark centers and explain when a route area has no verified map point.
@@ -95,10 +97,13 @@ src/map.js                 Lazy Leaflet maps, markers, demo connection, fallback
 src/geolocation.js         User-initiated browser location and error handling
 src/ride-handoff.js        Verified service links, trip-context sheet, destination copy
 src/experience.js          Options, directory, focused search, saved manual guide, arrival
+src/launch.js              Independent three-second logo intro
+src/presentation.js        Home-map presentation and cancellable screen motion
 src/styles.css             Responsive design and interaction states
 src/maps.css               Additive map/location styles in the existing design
 src/ride-handoff.css       Secondary service rows and responsive confirmation sheet
 src/experience.css         Additive mobile navigation, new screens, and safe-area actions
+src/presentation.css       Map-first home, splash and reduced-motion styling
 assets/                    Original SVG favicon and local licensed font
 tests/smoke.cjs             Optional browser checks
 tests/maps.cjs              Map, geolocation, privacy, and failure checks
@@ -110,9 +115,11 @@ tests/experience.cjs        Complete touch walkthrough, guide persistence, direc
 
 ## Verification
 
+Run `node tests/presentation.cjs` for the launch, map-first Home, 360/390/430px commuter walkthroughs, desktop layout, reduced motion, repeated picker taps, and map failure. Evidence and screenshots are in `.hackathon/presentation-results.json` and `.hackathon/presentation-screenshots/`. It uses the same installed Playwright/Chrome setup as the route suite below; repeated map requests use local SVG fixtures. See [.design/app-presentation-report.md](.design/app-presentation-report.md) for the implementation and verification notes.
+
 Run the app locally and execute `node tests/routes-research.cjs` with Playwright available (`NODE_PATH` may point to the bundled Node packages). `TEST_URL` overrides the default local server. This checks all 33 options, every selectable origin/destination pair and AI preset, read-only fields, keyboard pickers, route filtering, source disclosures, map behavior without guessed coordinates, DICT guide completion and persistence, recovery from old unsupported links, and reflow at 320–1440px. Maps use intercepted fixture tiles.
 
-Current route-update results are in `.hackathon/route-research-results.json`, with screenshots in `.hackathon/route-research-screenshots/`. Earlier smoke, maps, handoff, experience, and intelligence tests include historical D-series fixture expectations; those assertions describe the previous dataset and must be migrated before serving as regression checks for the researched routes.
+Current route-update results are in `.hackathon/route-research-results.json`, with screenshots in `.hackathon/route-research-screenshots/`. The current logic checks also run with `node tests/routa-intelligence.cjs`. Earlier smoke, maps, handoff, experience, and free-text AI browser tests include historical dataset or input expectations; those assertions must be migrated before serving as regression checks for the curated researched-route app.
 
 ## Credits and AI disclosure
 
@@ -126,4 +133,4 @@ Before a real launch: validate routes and boarding locations with local transpor
 
 ## Routa AI concept demo
 
-Open **Try Routa AI** below Home’s normal search to describe a trip, or **Ask Routa** on route details to ask about that itinerary. Optional route preferences compare only existing structured fields. Everything runs locally with deterministic rules and no model, backend, API, or new dependency. Walking comparisons remain unavailable without measured step distances. See [Routa AI behavior, simulation limits, and executed QA](.hackathon/ROUTA-AI.md).
+Open **Try Routa AI** below Home’s normal search to choose a ready-to-view trip, or **Ask Routa** on route details to ask about that itinerary. Optional route preferences compare only existing structured fields. Everything runs locally with deterministic rules and no model, backend, API, or new dependency. Walking comparisons remain unavailable without measured step distances. See [Routa AI behavior, simulation limits, and executed QA](.hackathon/ROUTA-AI.md).

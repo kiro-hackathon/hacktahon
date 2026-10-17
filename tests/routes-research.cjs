@@ -12,7 +12,7 @@ const tile = '<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><
   await context.route('https://tile.openstreetmap.org/**', route => route.fulfill({ contentType: 'image/svg+xml', body: tile }));
   const page = await context.newPage();
   page.on('pageerror', error => errors.push(error.message));
-  const visit = async hash => { await page.goto(`${base}/${hash}`); await page.reload(); await page.locator('#bottom-nav').waitFor({ state: 'attached' }); };
+  const visit = async hash => { await page.goto(`${base}/${hash}`); await page.reload(); await page.locator('#bottom-nav').waitFor({ state: 'attached' }); await page.locator('#launch-splash').waitFor({ state: 'detached' }); };
   const overflow = async () => assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
   fs.mkdirSync('.hackathon/route-research-screenshots', { recursive: true });
   try {
@@ -70,6 +70,7 @@ const tile = '<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><
     await page.locator('#line-direction').selectOption('divisoria-centrio');
     assert.match(await page.locator('.trip-signboard').innerText(), /Centrio/);
     await page.reload();
+    await page.locator('#launch-splash').waitFor({ state: 'detached' });
     assert.equal(await page.locator('#line-direction').inputValue(), 'divisoria-centrio');
     await page.locator('#line-map summary').click();
     await page.waitForSelector('#line-map .leaflet-marker-icon');
@@ -131,6 +132,7 @@ const tile = '<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><
     await page.locator('#start-trip-guide').click();
     await page.locator('#advance-guide').click();
     await page.reload();
+    await page.locator('#launch-splash').waitFor({ state: 'detached' });
     assert.match(await page.locator('.current-guide-step').innerText(), /STEP 2 OF 4/);
     for (let i = 0; i < 3; i++) await page.locator('#advance-guide').click();
     assert.equal(await page.locator('#arrival-screen').isVisible(), true);

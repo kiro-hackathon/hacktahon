@@ -13,10 +13,21 @@
   <link rel="stylesheet" href="./src/ride-handoff.css">
   <link rel="stylesheet" href="./src/experience.css">
   <link rel="stylesheet" href="./src/routa-ai.css">
+  <link rel="stylesheet" href="./src/presentation.css">
+  <script src="./src/launch.js"></script>
   <script defer src="./assets/vendor/leaflet/leaflet.js"></script>
   <script type="module" src="./src/app.js"></script>
 </head>
 <body>
+  <dialog id="launch-splash" class="launch-splash" aria-labelledby="launch-name" aria-describedby="launch-status">
+    <div class="launch-identity">
+      <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M9 23V10a4 4 0 0 1 4-4h7a5 5 0 0 1 0 10h-7l10 10M5 11h7M5 17h7"/></svg></span>
+      <p id="launch-name">Routa<span class="brand-teal">Cagayan</span></p>
+      <span class="launch-tagline">YOUR EVERYDAY SAKAY</span>
+    </div>
+    <p id="launch-status" class="sr-only">Opening RoutaCagayan</p>
+    <span class="launch-progress" aria-hidden="true"><span></span></span>
+  </dialog>
   <a class="skip-link" href="#main">Skip to trip planner</a>
   <header class="site-header">
     <a href="./" class="brand" aria-label="RoutaCagayan home">
@@ -30,10 +41,11 @@
   <main id="main" tabindex="-1">
     <section id="home-screen" class="home-screen" aria-labelledby="home-title">
       <div class="home-grid">
+        <div id="home-map-slot"></div>
         <div class="planner-column">
-          <div class="eyebrow"><span></span> A LITTLE LOCAL KNOW-HOW</div>
-          <h1 id="home-title">Saan ka<br><span>pupunta<span class="heading-dot">?</span></span></h1>
-          <p class="hero-copy">Your next sakay, made simple.<br>Find a jeepney. Know your stops. Go with confidence.</p>
+          <div class="eyebrow"><span></span> YOUR EVERYDAY JOURNEY</div>
+          <h1 id="home-title">Your next sakay.</h1>
+          <p class="hero-copy">Choose your places. We’ll help with the jeepney.</p>
           <form id="trip-form" novalidate>
             <div class="trip-fields">
               <div class="field-row origin-row">
@@ -46,10 +58,10 @@
                 <div class="field-content"><label for="destination">DESTINATION</label><div class="autocomplete"><input id="destination" name="destination" type="text" readonly value="Centrio" placeholder="Choose your destination" autocomplete="off" role="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="destination-search" aria-describedby="form-error"><ul id="destination-list" role="listbox" class="suggestions" hidden></ul></div></div>
               </div>
             </div>
-            <div class="location-actions"><button type="button" id="use-location" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/></svg><span>Use my current location</span></button><button type="button" id="demo-location">Start at DICT Office</button></div>
             <p class="location-status" id="location-status" role="status">Demo mode · choose a starting point and destination.</p>
             <p id="form-error" class="form-error" role="alert" hidden></p>
             <button type="submit" class="primary-button" id="find-button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg>Find my jeepney<span class="button-arrow" aria-hidden="true">→</span></button>
+            <div class="location-actions"><button type="button" id="use-location" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/></svg><span>Use my current location</span></button><button type="button" id="demo-location">Start at DICT Office</button></div>
           </form>
           <p class="planner-footnote"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>Ready-to-view demo journeys. Confirm signboards for actual travel.</p>
         </div>
@@ -87,8 +99,6 @@
           <div class="illustration-footer"><span>Less guessing. More going.</span><span class="schematic-label">ILLUSTRATION, NOT A MAP</span></div>
         </div>
       </div>
-
-      <div id="home-map-slot"></div>
 
       <section class="popular-section" aria-labelledby="popular-title"><div class="section-heading"><div><span class="eyebrow">A GOOD PLACE TO START</span><h2 id="popular-title">Around the city</h2></div><span class="section-hint">Pick your next stop <span aria-hidden="true">↗</span></span></div><div id="popular-destinations" class="destination-grid"></div></section>
       <div class="demo-note"><span class="info-icon" aria-hidden="true">i</span><p><strong>A little heads-up: this is a prototype.</strong> Familiar signboards and approximate corridors. Confirm the route and stops with the driver.</p><button class="text-button" id="about-demo">About the demo <span aria-hidden="true">↗</span></button></div>

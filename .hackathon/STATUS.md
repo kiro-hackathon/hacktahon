@@ -1,4 +1,15 @@
 # Status
+
+## Current app presentation update — October 17, 2026
+
+Implemented the requested three-second centered Routa logo intro, map-first Home, compact mobile trip sheet, desktop map/planner composition, and destination/results transitions. Existing researched routes, curated DICT presets, Routa AI, directory, saved manual guides, and provider handoffs remain. Reduced motion disables movement; the intro never waits for map tiles. Guide actions remain anchored during animation.
+
+Current focused verification: `tests/presentation.cjs` — **9 passing groups**, exit 0; `tests/routa-intelligence.cjs` — **7 passing logic groups**, exit 0. Phone widths: 360/390/430px; desktop: 1280px; short viewport: 390×450. Actual results, screenshots, data limitations, and the presentation walkthrough: [app presentation report](../.design/app-presentation-report.md).
+
+## Historical implementation notes
+
+The notes below describe earlier D-series builds. Current route data and default selection are documented in README.md and the current report above; older totals and fictional-line descriptions are not current regression results.
+
 DONE: complete mobile Home → Search → Options → Details → Manual Guide → Arrival flow, Jeepneys directory, and My Trip. Existing maps/geolocation, JoyRide/Angkas handoff, desktop hero, and approved visual identity are preserved. No new framework, backend, build step, or dependency installation.
 
 Local server confirmed: http://127.0.0.1:8080

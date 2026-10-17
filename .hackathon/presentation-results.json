@@ -1,0 +1,15 @@
+{
+  "passed": [
+    "360px: three-second modal splash, map-first layout, visible CTA, picker cancel, animated results and four-step arrival",
+    "390px: three-second modal splash, map-first layout, visible CTA, picker cancel, animated results and four-step arrival",
+    "430px: three-second modal splash, map-first layout, visible CTA, picker cancel, animated results and four-step arrival",
+    "USTP/Limketkai comparison, browser Back with choices retained, eight-line directory, My Trip and Routa AI preserved",
+    "Provider URLs and cancel retain the trip; expanded map and short viewport keep the planner usable",
+    "Reduced motion keeps the launch timing and disables splash, picker, and screen motion",
+    "Desktop has a proportional map and planner, with no horizontal overflow",
+    "Tile failure does not delay splash completion or prevent trip results; retry remains accessible",
+    "No uncaught browser exceptions"
+  ],
+  "errors": [],
+  "tiles": "Local SVG fixtures; live OSM separately reviewed once"
+}
