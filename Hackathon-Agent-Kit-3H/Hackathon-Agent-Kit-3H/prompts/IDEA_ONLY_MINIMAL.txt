@@ -1,0 +1,1 @@
+Read AGENTS.md and START_HERE.md. IDEA: <PASTE IDEA HERE>. Execute the 3-hour hackathon workflow end to end; build a working polished MVP, verify it, and prepare the demo. Do not stop at planning.
