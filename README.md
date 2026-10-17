@@ -61,7 +61,7 @@ Destinations verified October 17, 2026:
 | JoyRide | [Official website](https://joyride.com.ph/) | [com.joyride.rider](https://play.google.com/store/apps/details?id=com.joyride.rider) |
 | Angkas | [Official website](https://www.angkas.com/) | [com.angkas.customer](https://play.google.com/store/apps/details?id=com.angkas.customer) |
 
-The same website links work across platforms; the prototype does not detect installed apps. The icons are original generic helmet drawings, **not provider logos**. Provider requests happen only after the explicit Continue action. The URLs contain no trip details, and `noopener noreferrer` prevents opener access and referrer transmission. Copying writes only the destination name after a click; if clipboard access is unavailable, the sheet offers selectable text without requesting extra permissions.
+The same website links work across platforms; the prototype does not detect installed apps. The transport symbols are generic Iconoodle icons, **not provider logos**. Provider requests happen only after the explicit Continue action. The URLs contain no trip details, and `noopener noreferrer` prevents opener access and referrer transmission. Copying writes only the destination name after a click; if clipboard access is unavailable, the sheet offers selectable text without requesting extra permissions.
 
 **Future integrations:** actual booking APIs and automatic trip transfer would require documented provider support, appropriate authorization, and explicit user consent. They are not implemented or simulated here.
 
@@ -104,7 +104,8 @@ src/maps.css               Additive map/location styles in the existing design
 src/ride-handoff.css       Secondary service rows and responsive confirmation sheet
 src/experience.css         Additive mobile navigation, new screens, and safe-area actions
 src/presentation.css       Map-first home, splash and reduced-motion styling
-assets/                    Original SVG favicon and local licensed font
+src/streamlined.css        Planner-first navigation and content-density overrides
+assets/                    App icon, Iconoodle license, and local licensed font
 tests/smoke.cjs             Optional browser checks
 tests/maps.cjs              Map, geolocation, privacy, and failure checks
 tests/handoff.cjs           Provider navigation, cancel/copy, focus, layout checks
@@ -125,7 +126,7 @@ Current route-update results are in `.hackathon/route-research-results.json`, wi
 
 Codex assisted with product interpretation, original HTML/CSS/JavaScript, SVG illustration, tests, and documentation. No frontend template or UI component library was reused. The included **Hackathon Agent Kit** and **Design Partner** skill guided the workflow; the user's 60-minute brief superseded the kit's three-hour schedule. Existing kit files were preserved.
 
-[Manrope](https://github.com/google/fonts/tree/main/ofl/manrope) is bundled under the SIL Open Font License; see `assets/fonts/OFL.txt`. Icons and the jeepney illustration are original SVG markup created for this prototype.
+[Manrope](https://github.com/google/fonts/tree/main/ofl/manrope) is bundled under the SIL Open Font License; see `assets/fonts/OFL.txt`. Interface icons are adapted from the MIT-licensed [Iconoodle](https://github.com/NK2552003/Iconoodle) Coolicons collection; see `assets/iconoodle-LICENSE.txt`. The jeepney illustration is original SVG markup created for this prototype.
 
 [Leaflet 1.9.4](https://leafletjs.com/) is vendored under BSD-2-Clause (`assets/vendor/leaflet/LICENSE`). Map data and tiles are © [OpenStreetMap contributors](https://www.openstreetmap.org/copyright), licensed under ODbL. Attribution remains visible inside every opened map. No map tiles are bundled.
 

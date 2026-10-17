@@ -1,20 +1,10 @@
 import { locations, jeepneyLines, getTripOptions, getTripOption, placeById, resolveLocation, searchLocations, searchLines, routeWarning, getDemoOrigins, getDemoDestinations, demoSelection } from './routes.js';
 import { createTripMap, mapMarkup } from './map.js';
 import { rankTripOptions } from './routa-intelligence.js';
+import { icon } from './icons.js';
 
 const storageKey = 'routacagayan.demo.v1';
 const esc = value => String(value).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
-const paths = {
-  home: '<path d="m3 10 9-7 9 7v10H4V10m5 10v-7h6v7"/>',
-  jeep: '<rect x="4" y="5" width="16" height="14" rx="3"/><path d="M8 19v2m8-2v2M4 12h16M8 5V3h8v2M8 16h1m6 0h1"/>',
-  trip: '<circle cx="6" cy="5" r="2"/><circle cx="18" cy="19" r="2"/><path d="M6 7v7a4 4 0 0 0 4 4h1m7-1v-7a4 4 0 0 0-4-4h-1"/>',
-  arrow: '<path d="M19 12H5m6-6-6 6 6 6"/>',
-  check: '<path d="m5 12 4 4L19 6"/>',
-  flag: '<path d="M5 22V3m0 1c5-4 9 4 14 0v10c-5 4-9-4-14 0"/>',
-  walk: '<circle cx="14" cy="4" r="2"/><path d="m10 10 3-3 3 4 4 1M5 13l4-1 2-3m2 0-2 7-4 5m4-5 5 2 1 3"/>',
-  swap: '<path d="M8 19V5m-4 4 4-4 4 4m4-4v14m-4-4 4 4 4-4"/>',
-};
-const icon = name => `<svg viewBox="0 0 24 24" aria-hidden="true">${paths[name] || paths.trip}</svg>`;
 const badges = option => `<span class="option-badges">${option.lineCodes.map(code => `<span class="mini-route-badge" data-long="${code.length > 3}">${code}<small>ROUTE</small></span>`).join('')}</span>`;
 const disclosure = `<p class="experience-disclosure">Commuter references · ${routeWarning}</p>`;
 const sources = line => `<p class="experience-disclosure">${esc(line.statusLabel)} · ${line.sourceUrls.map((url, i) => `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">Source${i ? ` ${i + 1}` : ''} ↗</a>`).join(' · ')}</p>`;
@@ -67,8 +57,8 @@ export function createExperience(hooks) {
     section.hidden = true;
     $('main').append(section);
   });
-  $('.site-header nav').insertAdjacentHTML('beforeend', '<a href="#jeepneys" data-main-nav="directory">Jeepneys</a><a href="#my-trip" data-main-nav="mytrip">My Trip</a>');
-  document.body.insertAdjacentHTML('beforeend', `<nav class="bottom-nav" id="bottom-nav" aria-label="Main app navigation"><a href="#home" data-main-nav="home">${icon('home')}<span>Home</span></a><a href="#jeepneys" data-main-nav="directory">${icon('jeep')}<span>Jeepneys</span></a><a href="#my-trip" data-main-nav="mytrip">${icon('trip')}<span>My Trip</span></a></nav><div class="details-action" id="details-action" hidden><span>ROUTE REFERENCE · MANUAL GUIDE</span><button class="primary-button" id="start-trip-guide">Start trip guide <span aria-hidden="true">→</span></button></div>`);
+  $('.site-header nav').insertAdjacentHTML('beforeend', `<a href="#jeepneys" data-main-nav="directory">${icon('jeep')}<span>Routes</span></a><a href="#my-trip" data-main-nav="mytrip">${icon('trip')}<span>My Trip</span></a>`);
+  document.body.insertAdjacentHTML('beforeend', `<nav class="bottom-nav" id="bottom-nav" aria-label="Main app navigation"><a href="#home" data-main-nav="home">${icon('home')}<span>Home</span></a><a href="#jeepneys" data-main-nav="directory">${icon('jeep')}<span>Routes</span></a><a href="#my-trip" data-main-nav="mytrip">${icon('trip')}<span>My Trip</span></a></nav><div class="details-action" id="details-action" hidden><span>ROUTE REFERENCE · MANUAL GUIDE</span><button class="primary-button" id="start-trip-guide">Start trip guide <span aria-hidden="true">→</span></button></div>`);
   document.body.insertAdjacentHTML('beforeend', `<dialog id="destination-search" class="destination-search" aria-labelledby="search-title"><header class="search-header"><button type="button" class="search-back" aria-label="Back from destination search">${icon('arrow')}</button><h2 id="search-title">Where are you headed?</h2><span class="demo-pill">REFERENCE</span></header><div class="search-fields"><label for="search-origin">STARTING POINT</label><div class="search-origin-row"><input id="search-origin" readonly autocomplete="off" placeholder="Choose a starting landmark"><button type="button" id="search-swap" aria-label="Swap search locations">${icon('swap')}</button></div><label for="search-destination">DESTINATION</label><input id="search-destination" readonly autocomplete="off" placeholder="Search a CDO landmark"></div><div class="search-matches"><h3 id="search-list-title">CDO landmarks</h3><p id="search-no-match" role="status" hidden>Location not in demo yet. Choose a supported landmark below.</p><div id="search-location-list" aria-labelledby="search-list-title"></div></div><div class="search-bottom"><p id="search-help" role="status"></p><button type="button" class="primary-button" id="search-submit">Find my jeepney <span aria-hidden="true">→</span></button></div></dialog><dialog id="guide-confirm" class="guide-confirm" aria-labelledby="guide-confirm-title"><span class="eyebrow">YOUR JOURNEY</span><h2 id="guide-confirm-title"></h2><p id="guide-confirm-description"></p><div class="confirm-actions"><button type="button" class="secondary-button" id="confirm-cancel" autofocus>Keep guiding</button><button type="button" class="primary-button" id="confirm-accept">Save and leave</button></div></dialog>`);
   const searchDialog = $('#destination-search');
   const confirmDialog = $('#guide-confirm');
@@ -312,6 +302,8 @@ export function createExperience(hooks) {
     if (name !== 'home') closeSearch();
     const activeNav = ['directory', 'line'].includes(name) ? 'directory' : ['mytrip', 'guide', 'arrival'].includes(name) ? 'mytrip' : 'home';
     $('#plan-link').classList.toggle('nav-active', activeNav === 'home');
+    if (activeNav === 'home') $('#plan-link').setAttribute('aria-current', 'page');
+    else $('#plan-link').removeAttribute('aria-current');
     document.querySelectorAll('[data-main-nav]').forEach(link => {
       const active = link.dataset.mainNav === activeNav;
       link.classList.toggle('nav-active', active);

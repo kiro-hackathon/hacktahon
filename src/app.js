@@ -5,26 +5,10 @@ import { addRideOptions, closeRideHandoff } from './ride-handoff.js';
 import { createExperience } from './experience.js';
 import { createRoutaAI } from './routa-ai.js';
 import { animateScreen, presentHomeMap } from './presentation.js';
+import { icon } from './icons.js';
 
 const $ = selector => document.querySelector(selector);
 const escape = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
-const paths = {
-  campus: '<path d="m3 9 9-5 9 5-9 5-9-5Zm4 3v6c3 2 7 2 10 0v-6M21 9v7"/>',
-  city: '<path d="M3 21h18M5 21V10h5v11m0-16h6v16m0-8h4v8M12 8h2m-2 4h2m-2 4h2M7 13v1m0 3v1M18 16v1"/>',
-  bag: '<path d="M5 8h14l2 13H3L5 8Zm3 0V6a4 4 0 0 1 8 0v2M8 11v1m8-1v1"/>',
-  building: '<path d="M3 21h18M5 21V8l7-4 7 4v13M8 10h2m4 0h2m-8 4h2m4 0h2m-6 7v-3h4v3"/>',
-  market: '<path d="M4 10v11h16V10M3 10l2-6h14l2 6M3 10a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0M9 21v-6h6v6M9 4v6m6-6v6"/>',
-  shop: '<path d="M4 21V8h16v13M3 8l2-4h14l2 4M8 12h8m-8 4h8M2 21h20"/>',
-  arrow: '<path d="M19 12H5m6-6-6 6 6 6"/>',
-  jeep: '<rect x="4" y="5" width="16" height="14" rx="3"/><path d="M8 19v2m8-2v2M4 12h16M8 5V3h8v2M8 16h1m6 0h1M8 8v2m4-2v2m4-2v2"/>',
-  walk: '<circle cx="14" cy="4" r="2"/><path d="m10 10 3-3 3 4 4 1M5 13l4-1 2-3m2 0-2 7-4 5m4-5 5 2 1 3"/>',
-  stop: '<path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2.5"/>',
-  flag: '<path d="M5 22V3m0 1c5-4 9 4 14 0v10c-5 4-9-4-14 0"/>',
-  check: '<path d="m5 12 4 4L19 6"/>',
-  info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v.1"/>',
-  route: '<circle cx="6" cy="5" r="2"/><circle cx="18" cy="19" r="2"/><path d="M6 7v7a4 4 0 0 0 4 4h1m7-1v-7a4 4 0 0 0-4-4h-1"/>',
-};
-const icon = (name, className = '') => `<svg class="${className}" viewBox="0 0 24 24" aria-hidden="true">${paths[name] || paths.stop}</svg>`;
 const screens = ['home', 'result', 'empty', 'options', 'directory', 'line', 'mytrip', 'guide', 'arrival'];
 const origin = $('#origin');
 const destination = $('#destination');
@@ -115,7 +99,7 @@ function updateShortcuts() {
   origin.value = selected.from.name;
   destination.value = selected.to.name;
   const choices = getDemoDestinations(selected.from.id);
-  $('#popular-destinations').innerHTML = choices.slice(0, 6).map(place => `<button type="button" class="destination-card" data-destination="${place.id}" aria-pressed="${place.id === selected.to.id}" aria-label="Set destination to ${escape(place.name)}"><span class="place-icon">${icon(place.icon)}</span><span class="place-arrow" aria-hidden="true">↗</span><strong>${escape(place.short)}</strong><small>${escape(place.category)}</small></button>`).join('');
+  $('#popular-destinations').innerHTML = choices.slice(0, 3).map(place => `<button type="button" class="destination-card" data-destination="${place.id}" aria-pressed="${place.id === selected.to.id}" aria-label="Set destination to ${escape(place.name)}"><span class="place-icon">${icon(place.icon)}</span><span class="place-arrow" aria-hidden="true">${icon('arrowRight')}</span><strong>${escape(place.short)}</strong><small>${escape(place.category)}</small></button>`).join('');
   $('#swap-button').hidden = !findRoute(selected.to.id, selected.from.id);
   updateHomeMap();
 }

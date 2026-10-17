@@ -7,7 +7,7 @@ dialog.launch-splash { position: fixed; inset: 0; width: 100%; height: 100%; max
 .launch-splash::backdrop { background: var(--paper); }
 .launch-identity { display: flex; flex-direction: column; align-items: center; text-align: center; animation: identity-arrive 650ms cubic-bezier(.22, 1, .36, 1) both; }
 .launch-identity .brand-mark { width: 76px; height: 76px; border-radius: 23px; box-shadow: 0 12px 28px #147d761c; }
-.launch-identity .brand-mark svg { width: 53px; height: 53px; }
+.launch-identity .brand-mark img { width: 100%; height: 100%; object-fit: contain; }
 .launch-identity p { margin-top: 23px; font-size: clamp(25px, 7vw, 32px); font-weight: 800; letter-spacing: -1.4px; }
 .launch-tagline { margin-top: 11px; font-size: 9px; font-weight: 700; letter-spacing: 2.6px; color: var(--muted); }
 .launch-progress { position: absolute; left: 50%; bottom: max(11%, calc(env(safe-area-inset-bottom) + 30px)); transform: translateX(-50%); width: 70px; height: 3px; border-radius: 4px; overflow: hidden; background: #dfe9e1; }

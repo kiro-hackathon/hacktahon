@@ -1,5 +1,6 @@
 import { parseTripRequest, matchLandmark, answerRouteQuestion } from './routa-intelligence.js';
 import { locations, tripOptions } from './routes.js';
+import { icon } from './icons.js';
 
 /** View adapter only. Intent parsing and route answers live in routa-intelligence.js. */
 export function createRoutaAI(hooks) {
@@ -10,7 +11,7 @@ export function createRoutaAI(hooks) {
   let awaitingOrigin = false;
 
   $('#trip-form').insertAdjacentHTML('afterend', `<details class="smart-search" id="smart-search">
-    <summary><span><strong>Try Routa AI</strong><small>Choose a ready-to-view trip</small></span><span class="ai-concept">AI concept demo</span></summary>
+    <summary><span><strong>Try a sample trip</strong><small>Browse ready-made routes</small></span><span class="ai-concept">DEMO</span></summary>
     <div class="smart-search-content"><form id="smart-trip-form" novalidate>
       <label for="smart-trip-input">Where would you like to go?</label>
       <select id="smart-trip-input" aria-describedby="smart-trip-hint smart-trip-status"></select>
@@ -27,7 +28,7 @@ export function createRoutaAI(hooks) {
   $('#smart-trip-input').value = 'From DICT Office to Centrio';
   document.body.insertAdjacentHTML('beforeend', `<dialog id="routa-assistant" class="routa-assistant" aria-labelledby="routa-assistant-title" aria-describedby="routa-assistant-disclosure">
     <div class="assistant-handle" aria-hidden="true"></div>
-    <header class="assistant-header"><div><span class="ai-concept">AI concept demo</span><h2 id="routa-assistant-title">Ask Routa</h2></div><button type="button" class="assistant-close" id="routa-assistant-close" aria-label="Close Ask Routa" autofocus>×</button></header>
+    <header class="assistant-header"><div><span class="ai-concept">AI concept demo</span><h2 id="routa-assistant-title">Ask Routa</h2></div><button type="button" class="assistant-close" id="routa-assistant-close" aria-label="Close Ask Routa" autofocus>${icon('close')}</button></header>
     <p class="assistant-context" id="routa-assistant-context"></p>
     <div class="assistant-messages" id="routa-messages" role="log" aria-label="Routa conversation" aria-live="polite" aria-relevant="additions" tabindex="0"></div>
     <div class="assistant-questions" aria-label="Suggested questions">${['Where do I board?', 'Where do I get off?', 'Are there transfers?', 'What signboard should I look for?'].map(question => `<button type="button" data-routa-question="${question}">${question}</button>`).join('')}</div>

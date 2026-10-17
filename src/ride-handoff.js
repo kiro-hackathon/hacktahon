@@ -8,9 +8,8 @@ export const rideServices = [
   { id: 'angkas', name: 'Angkas', description: 'Motorcycle taxi rides.', url: 'https://www.angkas.com/', domain: 'www.angkas.com' },
 ];
 
-// Original generic transport icon, not a provider logo.
-const helmetIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13a8 8 0 1 0-16 0v5a2 2 0 0 0 2 2h9l5-5v-2Z"/><path d="M20 11h-8v5h7M7 6l2 2M7 20v-4"/></svg>';
-const externalIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6m0-6-9 9M10 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-5"/></svg>';
+const transportIcon = icon('jeep');
+const externalIcon = icon('external');
 let sheet;
 let opener;
 let sheetVersion = 0;
@@ -27,7 +26,7 @@ function ensureSheet() {
   sheet.setAttribute('aria-labelledby', 'handoff-title');
   sheet.setAttribute('aria-describedby', 'handoff-description');
   sheet.innerHTML = `<div class="handoff-top"><span class="eyebrow">CONTINUE YOUR JOURNEY</span><button type="button" class="icon-button" data-handoff-close aria-label="Close ride-hailing handoff">×</button></div>
-    <div class="handoff-heading"><span class="ride-service-icon">${helmetIcon}</span><h2 id="handoff-title"></h2></div>
+    <div class="handoff-heading"><span class="ride-service-icon">${transportIcon}</span><h2 id="handoff-title"></h2></div>
     <p id="handoff-description">Booking continues in the provider’s app. Enter your pickup and destination there; RoutaCagayan won’t transfer them automatically.</p>
     <dl class="handoff-trip"><div><dt>STARTING POINT</dt><dd id="handoff-origin"></dd></div><div><dt>DESTINATION</dt><dd id="handoff-destination"></dd></div></dl>
     <button type="button" class="handoff-copy" id="copy-ride-destination"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V3H4v13h4"/></svg><span>Copy destination</span></button>
@@ -92,9 +91,10 @@ export function addRideOptions(afterElement, trip) {
   const section = document.createElement('section');
   section.className = 'ride-options';
   section.setAttribute('aria-labelledby', 'ride-options-title');
-  section.innerHTML = `<h2 id="ride-options-title">Other ways to get there</h2><p class="ride-options-description">Prefer a direct ride? Continue with a ride-hailing app.</p><div class="ride-service-list">${rideServices.map(service => `<article class="ride-service"><span class="ride-service-icon">${helmetIcon}</span><div class="ride-service-copy"><h3>${service.name}</h3><p>${service.description}</p></div><button type="button" class="ride-open" data-ride-provider="${service.id}" aria-haspopup="dialog">Open ${service.name} ${externalIcon}</button></article>`).join('')}</div><p class="ride-options-note">Booking continues outside RoutaCagayan.</p>`;
+  section.innerHTML = `<h2 id="ride-options-title">Other ways to get there</h2><p class="ride-options-description">Prefer a direct ride? Continue with a ride-hailing app.</p><div class="ride-service-list">${rideServices.map(service => `<article class="ride-service"><span class="ride-service-icon">${transportIcon}</span><div class="ride-service-copy"><h3>${service.name}</h3><p>${service.description}</p></div><button type="button" class="ride-open" data-ride-provider="${service.id}" aria-haspopup="dialog">Open ${service.name} ${externalIcon}</button></article>`).join('')}</div><p class="ride-options-note">Booking continues outside RoutaCagayan.</p>`;
   section.querySelectorAll('[data-ride-provider]').forEach(button => {
     button.addEventListener('click', () => openHandoff(rideServices.find(service => service.id === button.dataset.rideProvider), trip, button));
   });
   afterElement.after(section);
 }
+import { icon } from './icons.js';
