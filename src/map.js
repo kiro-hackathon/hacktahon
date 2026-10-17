@@ -44,10 +44,10 @@ export function createTripMap(section, initial = {}) {
       source.textContent = 'Landmark source: OpenStreetMap ↗';
       content.append(detail, source);
     }
-    const kind = role === 'Origin' ? 'origin' : role === 'Destination' ? 'destination' : 'landmark';
+    const kind = role === 'Origin' ? 'origin' : role === 'Destination' ? 'destination' : role === 'Transfer' ? 'transfer' : 'landmark';
     const pin = L.marker(place.coordinates, {
       title: label, alt: label, keyboard: true,
-      icon: L.divIcon({ className: `trip-map-marker marker-${kind}`, html: `<span>${kind === 'origin' ? 'A' : kind === 'destination' ? 'B' : ''}</span>`, iconSize: [30, 30], iconAnchor: [15, 15] }),
+      icon: L.divIcon({ className: `trip-map-marker marker-${kind}`, html: `<span>${kind === 'origin' ? 'A' : kind === 'destination' ? 'B' : kind === 'transfer' ? 'T' : ''}</span>`, iconSize: [30, 30], iconAnchor: [15, 15] }),
     }).bindPopup(content);
     pin.on('add', () => pin.getElement()?.setAttribute('aria-label', label));
     return pin.addTo(group);
@@ -56,27 +56,30 @@ export function createTripMap(section, initial = {}) {
   function draw() {
     if (!map || disposed) return;
     group.clearLayers();
-    const { from, to, connection = false } = state;
-    const selected = new Set([from?.id, to?.id]);
-    locations.filter(place => !selected.has(place.id)).forEach(place => marker(place));
+    const { from, to, via = [], connection = false } = state;
+    const selected = new Set([from?.id, to?.id, ...via.map(place => place.id)]);
+    locations.filter(place => place.coordinates && !selected.has(place.id)).forEach(place => marker(place));
     if (from?.coordinates) marker(from, 'Origin');
     if (to?.coordinates) marker(to, 'Destination');
+    via.filter(place => place.coordinates).forEach(place => marker(place, 'Transfer'));
     if (from?.id === 'current' && Number.isFinite(from.accuracy) && from.accuracy > 0) {
       L.circle(from.coordinates, { radius: from.accuracy, color: '#147d76', weight: 1, fillOpacity: 0.07, interactive: false }).addTo(group);
     }
-    if (connection && from?.coordinates && to?.coordinates) {
-      L.polyline([from.coordinates, to.coordinates], { color: '#147d76', weight: 4, dashArray: '7 9', interactive: false }).addTo(group);
+    if (connection && from?.coordinates && to?.coordinates && via.every(place => place.coordinates)) {
+      L.polyline([from.coordinates, ...via.map(place => place.coordinates), to.coordinates], { color: '#147d76', weight: 4, dashArray: '7 9', interactive: false }).addTo(group);
     }
-    section.querySelector('.map-connection-note').textContent = connection
-      ? 'Demo connection · straight line, not a verified jeepney road route.'
+    section.querySelector('.map-connection-note').textContent = [from, ...via, to].some(place => place && !place.coordinates)
+      ? 'Some route areas have no verified map point yet. Only sourced landmarks are shown; no route path is mapped.'
+      : connection
+      ? 'Approximate / not for navigation · straight line, not a verified jeepney road route.'
       : from?.id === 'current'
         ? 'GPS position and destination only · no live jeepney routing.'
         : 'Landmark locations only · no live jeepney routing or road directions.';
-    const points = [from, to].filter(place => place?.coordinates).map(place => place.coordinates);
+    const points = [from, ...via, to].filter(place => place?.coordinates).map(place => place.coordinates);
     map.invalidateSize({ pan: false });
     if (points.length > 1) map.fitBounds(points, { padding: [40, 40], maxZoom: 16, animate: false });
     else if (points.length && from?.id === 'current') map.setView(points[0], 14, { animate: false });
-    else if (points.length) map.fitBounds(locations.map(place => place.coordinates), { padding: [35, 35], maxZoom: 15, animate: false });
+    else if (points.length) map.fitBounds(locations.filter(place => place.coordinates).map(place => place.coordinates), { padding: [35, 35], maxZoom: 15, animate: false });
     else map.setView(mapConfig.center, mapConfig.zoom, { animate: false });
   }
 

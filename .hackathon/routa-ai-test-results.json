@@ -1,0 +1,20 @@
+{
+  "passed": [
+    "360px: existing mobile search → preferences → selected details → assistant replies/focus/Escape → manual guide → arrival → home",
+    "360px: natural-language endpoints/preferences → original options and details; reload context and browser Back",
+    "390px: existing mobile search → preferences → selected details → assistant replies/focus/Escape → manual guide → arrival → home",
+    "390px: natural-language endpoints/preferences → original options and details; reload context and browser Back",
+    "Missing origin selection and reuse, Bisaya search, unsupported origin/pair, and ambiguous mall clarification",
+    "Filipino phrases, unknown questions, escaped user text, and changed-route context",
+    "320–1440px reflow, short viewport/composer, reduced motion, and backdrop dismissal",
+    "No uncaught JavaScript errors or external assistant requests"
+  ],
+  "errors": [],
+  "external": [],
+  "comparisonPair": "Gaisano → Carmen Market",
+  "optionIds": [
+    "legacy-r1-gaisano-carmen-gaisano-carmen",
+    "legacy-r2-gaisano-agora-cogon-carmen-gaisano-carmen"
+  ],
+  "datasetItineraries": 30
+}

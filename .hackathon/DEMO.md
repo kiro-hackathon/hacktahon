@@ -1,4 +1,6 @@
-# 75-second demo
+# Earlier demonstration script
+
+**Current final walkthrough: [90-second complete mobile experience](DEMO-90-SECONDS.md).** The script below records the earlier base prototype and is superseded for the final presentation.
 
 Pitch: RoutaCagayan helps unfamiliar CDO commuters turn two landmarks into an understandable jeepney journey.
 
@@ -49,3 +51,11 @@ Simulated: every route code, boarding point, drop-off, travel instruction, and s
 4. Explain that exact coordinates remain in tab memory; tile requests reveal the approximate map view. Reload requires detecting the GPS position again.
 
 Evidence and limits: [QA.md](QA.md). Future work: verified route data, commuter field tests, accessibility and physical-device testing.
+
+## Optional ride-hailing walkthrough (20 seconds)
+
+1. On any supported result, scroll below the four jeepney instructions to **Other ways to get there**. The main jeepney recommendation remains unchanged.
+2. Click **Open JoyRide** or **Open Angkas**. Point to the current trip context and manual-entry explanation. Optionally choose **Copy destination**.
+3. Cancel to demonstrate that the trip is preserved, then reopen and choose **Continue to app**. This opens the named official website in a new tab; it does not automatically open an installed app, transfer the trip, or book a ride.
+
+Real booking APIs and automatic trip transfer are future integrations requiring documented provider support and user consent. No pricing, availability, arrival-time, or partnership claims are made by this prototype.

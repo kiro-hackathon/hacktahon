@@ -6,3 +6,13 @@
 - [x] Inspect mobile layout, keyboard interaction, and console.
 - [x] Fix observed usability issues; record evidence.
 - [x] Complete README, QA record, and 60–90 second demo.
+- [x] Preserve the approved UI while adding maps/geolocation and their regression coverage.
+- [x] Verify official JoyRide/Angkas destinations; add secondary result rows and context sheet.
+- [x] Test provider navigation, cancellation, copy recovery, keyboard behavior, and mobile layout.
+- [x] Re-run all three suites; document booking API and trip-transfer limitations.
+- [x] Add focused search, real option selection, directory, and exactly three mobile navigation items.
+- [x] Centralize explicit line directions, 14 direct fixtures, and two complete fictional transfer fixtures.
+- [x] Complete data-driven manual guides, previous step, exit/replacement confirmation, saved progress, and arrival.
+- [x] Verify full flow at 360/390/430/1440px and preserve the three prior regression suites.
+- [x] Reproduce/fix stale exit sheet; audit safe-area actions, map hit testing, storage recovery, and unknown places.
+- [x] Document final mobile UX review, limitations, AI/template reuse, and the 90-second walkthrough.

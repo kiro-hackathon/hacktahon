@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-17",
+  "browser": "Chrome via Playwright",
+  "providerNavigation": "Exact official URLs intercepted; no actual booking attempted",
+  "clipboard": "API success/failure fixtures; OS clipboard not accessed",
+  "passed": [
+    "Two secondary services follow the unchanged D1 recommendation and four instructions; no pre-emptive provider requests",
+    "JoyRide sheet shows current trip and transfer limitation; Cancel preserves trip and returns focus",
+    "JoyRide Continue opens the exact verified official URL in a separate tab with no trip query or booking simulation",
+    "Angkas Continue opens the exact verified official URL in a separate tab with no trip query or booking simulation",
+    "Copy destination writes only the selected landmark after an explicit click (clipboard fixture)",
+    "Clipboard failure offers selected text without permissions; Escape restores focus and reopening resets copy state",
+    "Native modal keeps underlying controls out of keyboard focus; close button and backdrop preserve the result",
+    "Reverse trip handoff uses the current origin and destination",
+    "Service controls and long-trip sheet fit 320/360/375/390/430/768/1440px and a short 390x568 viewport",
+    "Browser navigation dismisses the sheet without altering the existing planner flow",
+    "Only explicit Continue actions request provider URLs; no browser console or application errors"
+  ],
+  "errors": []
+}

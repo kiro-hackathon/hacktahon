@@ -22,3 +22,6 @@ The user's 60-minute limit overrides the bundled three-hour schedule.
 
 ## Requested map/geolocation upgrade
 Preserve the approved UI. Add vendored Leaflet + online OSM tiles as compact, expandable sections; keep the illustration available offline. Reusable sourced feature centers live in src/locations.js, with source evidence in landmark-source.json. Browser GPS is click-initiated, optional, memory-only, and never silently converted to a demo origin or valid jeepney route. All original route fixtures remain unchanged.
+
+## Complete mobile experience — final authorized scope
+The later complete-experience brief supersedes the interrupted audit's no-new-features restriction. Keep the brand and desktop hero. Add focused mobile search, option comparison/selection, route details with signboard, manual guide and arrival, shared-data line directory, and Home/Jeepneys/My Trip navigation. Preserve map, GPS, and ride-app handoffs. Two explicitly fictional complete transfer alternatives via Centrio are authorized for the primary pair; other pairs retain direct fixtures. Progress may persist as known fixture IDs and manual step indices, never exact GPS. The final flow and review are documented in .design/mobile-experience-report.md and DEMO-90-SECONDS.md.

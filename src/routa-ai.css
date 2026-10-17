@@ -1,0 +1,62 @@
+/* Routa AI stays inside the planner's existing palette, type and spacing system. */
+.smart-search { margin-top: 18px; border-block: 1px solid var(--line); }
+.smart-search summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; cursor: pointer; padding: 15px 0; list-style: none; }
+.smart-search summary::-webkit-details-marker { display: none; }
+.smart-search summary:focus-visible { outline: 3px solid var(--teal); outline-offset: 3px; border-radius: 4px; }
+.smart-search summary>span:first-child { min-width: 0; }
+.smart-search summary strong { color: var(--teal-dark); font-size: 13px; }
+.smart-search summary strong::after { content: ' +'; margin-left: 4px; }
+.smart-search[open] summary strong::after { content: ' −'; }
+.smart-search summary small { display: block; font-size: 11px; color: var(--muted); margin-top: 4px; line-height: 1.6; }
+.ai-concept { display: inline-block; color: #79571e; background: #fbefd9; border-radius: 5px; padding: 5px 7px; font-size: 9px; font-weight: 700; line-height: 1.5; flex-shrink: 0; }
+.smart-search-content { padding: 3px 0 16px; }
+.smart-search label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 8px; }
+.smart-search :is(textarea, select), .smart-search select { width: 100%; min-height: 48px; padding: 12px; font: inherit; font-size: 16px; color: var(--ink); border: 1px solid #cbd9d0; border-radius: 9px; background: #fff; line-height: 1.6; }
+.smart-search :is(textarea, select) { resize: vertical; }
+#smart-trip-hint, .ai-local-note { color: var(--muted); font-size: 11px; line-height: 1.8; margin-top: 8px; }
+.smart-submit { background: var(--mint); border: 1px solid #cbd9d0; color: var(--teal-dark); border-radius: 8px; min-height: 44px; padding: 10px 14px; font-size: 12px; font-weight: 750; margin-top: 12px; }
+.smart-submit span { margin-left: 12px; }
+.smart-submit:hover { background: #e1edde; border-color: var(--teal); }
+#smart-trip-result { margin-top: 14px; padding: 13px; background: var(--mint); border-left: 3px solid var(--teal); border-radius: 0 8px 8px 0; }
+#smart-trip-status { font-size: 12px; line-height: 1.85; overflow-wrap: anywhere; }
+#smart-origin-picker { margin-top: 12px; }
+.route-preferences { margin-top: 20px; padding-block: 17px; border-block: 1px solid var(--line); }
+.route-preferences h2 { font-size: 13px; margin-bottom: 11px; }
+.preference-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+.preference-buttons button { transition: none; }
+.preference-buttons button, .assistant-questions button { min-height: 44px; padding: 10px 12px; border: 1px solid #ccdacf; border-radius: 8px; background: #fff; color: var(--teal-dark); font-size: 12px; font-weight: 650; line-height: 1.6; text-align: left; }
+.preference-buttons button[aria-pressed="true"] { background: var(--teal-dark); border-color: var(--teal-dark); color: #fff; }
+.preference-buttons button:disabled { color: var(--muted); background: #f1f2eb; border-style: dashed; }
+.preference-buttons button:not(:disabled):hover, .assistant-questions button:hover { border-color: var(--teal); }
+.preference-note, .preference-reason { color: var(--muted); font-size: 11px; line-height: 1.9; margin-top: 10px; }
+.preference-reason { color: var(--teal-dark); }
+.ask-routa-panel { display: flex; gap: 14px; justify-content: space-between; align-items: center; padding: 17px 0; border-block: 1px solid var(--line); margin: 20px 0; }
+.ask-routa-panel>div { min-width: 0; }
+.ask-routa-panel strong { font-size: 13px; }
+.ask-routa-panel small { display: block; color: var(--muted); font-size: 10px; line-height: 1.8; margin-top: 5px; }
+.ask-routa-panel button { min-height: 44px; flex-shrink: 0; padding: 10px 13px; background: var(--mint); border: 1px solid #cbd9d0; color: var(--teal-dark); border-radius: 9px; font-size: 12px; font-weight: 750; }
+.ask-routa-panel button:hover { border-color: var(--teal); }
+body.assistant-open { overflow: hidden; }
+dialog.routa-assistant { position: fixed; inset: 0; margin: auto auto 0; padding: 0; border: 1px solid var(--line); border-bottom: 0; border-radius: 22px 22px 0 0; width: min(100%, 520px); max-width: none; height: min(740px, calc(var(--assistant-viewport, 100dvh) - 8px)); max-height: calc(var(--assistant-viewport, 100dvh) - 8px); color: var(--ink); background: var(--paper); overflow: hidden; }
+dialog.routa-assistant[open] { display: flex; flex-direction: column; }
+.routa-assistant::backdrop { background: #142b3670; }
+.assistant-handle { width: 35px; height: 4px; border-radius: 3px; background: #cbd7ce; margin: 10px auto 0; flex-shrink: 0; }
+.assistant-header { display: flex; align-items: center; justify-content: space-between; gap: 15px; padding: 15px 22px 12px; flex-shrink: 0; }
+.assistant-header h2 { font-size: 25px; letter-spacing: -.8px; margin-top: 6px; }
+.assistant-close { width: 44px; height: 44px; background: var(--mint); border-radius: 50%; font-size: 25px; color: var(--teal-dark); }
+.assistant-close:hover { background: #dfe9da; }
+.assistant-context { padding: 0 22px 15px; font-size: 12px; line-height: 1.8; color: var(--muted); border-bottom: 1px solid var(--line); flex-shrink: 0; overflow-wrap: anywhere; }
+.assistant-messages { overflow-y: auto; overscroll-behavior: contain; flex: 1; min-height: 70px; padding: 20px 22px 12px; }
+.assistant-bubble { width: fit-content; max-width: 94%; background: var(--mint); padding: 13px 15px; border-radius: 13px 13px 13px 3px; margin-bottom: 12px; overflow-wrap: anywhere; }
+.assistant-speaker { display: block; font-size: 10px; font-weight: 750; color: var(--teal-dark); margin-bottom: 5px; }
+.assistant-bubble p { font-size: 13px; line-height: 1.85; }
+.assistant-bubble.is-user { margin-left: auto; background: var(--teal-dark); color: white; border-radius: 13px 13px 3px 13px; }
+.is-user .assistant-speaker { color: #dcece6; }
+.assistant-questions { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; padding: 12px 22px; border-top: 1px solid var(--line); flex-shrink: 0; }
+.assistant-questions button { padding: 9px 10px; font-size: 11px; }
+.assistant-composer { display: flex; gap: 8px; margin: 0 22px; padding: 5px 6px 5px 12px; border: 1px solid #cbd9d0; border-radius: 11px; background: #fff; flex-shrink: 0; }
+.assistant-composer input { border: 0; min-width: 0; width: 100%; background: transparent; color: var(--ink); min-height: 44px; font-size: 16px; }
+.assistant-composer button { border-radius: 8px; background: var(--teal-dark); color: #fff; width: 44px; height: 44px; flex-shrink: 0; font-size: 24px; }
+.assistant-disclosure { font-size: 10px; line-height: 1.7; color: var(--muted); text-align: center; padding: 10px 22px max(12px, env(safe-area-inset-bottom)); flex-shrink: 0; }
+@media (max-width: 359px) { .assistant-header, .assistant-context, .assistant-messages, .assistant-questions { padding-inline: 16px; } .assistant-composer { margin-inline: 16px; } .ask-routa-panel { flex-wrap: wrap; } }
+@media (max-height: 570px) { .assistant-header { padding-block: 6px; } .assistant-header h2 { font-size: 20px; } .assistant-context { padding-bottom: 7px; font-size: 11px; } .assistant-questions { padding-block: 6px; gap: 5px; } .assistant-questions button { min-height: 36px; padding-block: 5px; } .assistant-disclosure { padding-block: 6px; } }

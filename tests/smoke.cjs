@@ -20,23 +20,23 @@ const { chromium } = require('playwright');
     await page.goto(base);
     await page.locator('#origin').fill(from);
     await page.locator('#destination').fill(to);
-    await page.getByRole('button', { name: 'Find my jeepney' }).click();
+    await findAndSelect(page);
   };
   try {
     await page.goto(base);
-    await page.getByRole('button', { name: 'Find my jeepney' }).click();
+    await findAndSelect(page);
     assert.match(await page.locator('#form-error').innerText(), /Choose a destination/);
     assert.equal(await page.locator('#destination').getAttribute('aria-invalid'), 'true');
     pass('Empty destination shows actionable validation');
 
     await page.locator('#destination').fill('Airport');
     assert.match(await page.locator('#destination-list').innerText(), /No matching landmark/);
-    await page.getByRole('button', { name: 'Find my jeepney' }).click();
+    await findAndSelect(page);
     assert.match(await page.locator('#form-error').innerText(), /recognize that destination/);
     pass('Unknown landmark shows suggestion and validation recovery');
 
     await page.locator('#destination').fill('USTP CDO');
-    await page.getByRole('button', { name: 'Find my jeepney' }).click();
+    await findAndSelect(page);
     assert.match(await page.locator('#form-error').innerText(), /same place twice/);
     pass('Identical endpoints are handled');
 
@@ -46,7 +46,7 @@ const { chromium } = require('playwright');
     await page.getByRole('button', { name: 'Set destination to Divisoria', exact: true }).click();
     assert.equal(await page.locator('#destination').inputValue(), 'Divisoria');
     assert.equal(await page.locator('[data-destination="divisoria"]').getAttribute('aria-pressed'), 'true');
-    await page.getByRole('button', { name: 'Find my jeepney' }).click();
+    await findAndSelect(page);
     assert.equal(await page.locator('#result-screen').isVisible(), true);
     assert.match(await page.locator('.route-badge').innerText(), /D1/);
     assert.equal(await page.locator('.timeline li').count(), 4);
@@ -63,7 +63,7 @@ const { chromium } = require('playwright');
     await page.getByRole('button', { name: 'Swap starting point and destination' }).click();
     assert.equal(await page.locator('#origin').inputValue(), 'Divisoria');
     assert.equal(await page.locator('#destination').inputValue(), 'USTP CDO');
-    await page.getByRole('button', { name: 'Find my jeepney' }).click();
+    await findAndSelect(page);
     assert.match(await page.locator('.timeline li').first().innerText(), /Divisoria demo boarding point/);
     assert.match(await page.locator('.timeline li').last().innerText(), /USTP CDO/);
     pass('Reload, change trip, preserved fields, swap, and reverse instructions');
@@ -72,6 +72,7 @@ const { chromium } = require('playwright');
     assert.equal(await page.locator('#empty-screen').isVisible(), true);
     assert.match(await page.locator('.empty-content').innerText(), /Centrio → Cogon Market/);
     await page.locator('.example-trip').first().click();
+    await page.locator('[data-select-option]').first().click();
     assert.equal(await page.locator('#result-screen').isVisible(), true);
     assert.match(await page.locator('#result-title').innerText(), /Centrio/);
     pass('Unsupported pair offers a working journey from the same origin');
@@ -90,12 +91,12 @@ const { chromium } = require('playwright');
     pass('Autocomplete alias search, ArrowDown, Enter, and Escape');
 
     await page.getByRole('button', { name: 'How it works' }).click();
-    assert.equal(await page.locator('dialog').isVisible(), true);
+    assert.equal(await page.locator('#about-dialog').isVisible(), true);
     await page.keyboard.press('Escape');
-    assert.equal(await page.locator('dialog').isVisible(), false);
+    assert.equal(await page.locator('#about-dialog').isVisible(), false);
     await page.getByRole('button', { name: 'About the demo' }).click();
     await page.getByRole('button', { name: 'Got it. Let’s plan a trip' }).click();
-    assert.equal(await page.locator('dialog').isVisible(), false);
+    assert.equal(await page.locator('#about-dialog').isVisible(), false);
     pass('Both information controls and dialog dismissal work');
 
     // Validate every curated pair in both directions rather than only one screenshot.
@@ -155,3 +156,11 @@ const { chromium } = require('playwright');
     console.log(`\n${passed.length} checks passed.`);
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });
+
+// Route choice is intentional in the complete experience; retain the detail checks.
+async function findAndSelect(target) {
+  await target.getByRole('button', { name: 'Find my jeepney', exact: true }).click();
+  if (await target.locator('#options-screen').isVisible()) {
+    await target.locator('[data-select-option]').first().click();
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "passed": [
+    "Eight stable signboards; direction-aware filtering, aliases, Highway corridor, and conditional R1 variant",
+    "All 33 curated directional references load with source links and fitting badges",
+    "Directory code and corridor search, no matches, stable line links, direction selection and reload",
+    "Unsourced areas do not create guessed map markers or paths",
+    "Preset-only inputs, keyboard open/Escape, DICT default and no arbitrary GPS entry",
+    "All 30 selectable origin/destination pairs reach successful results",
+    "DICT sample includes nearby boarding, explicit demo labeling, guide persistence and completion",
+    "All 30 AI trip presets resolve and open route options",
+    "Old unsupported links recover into a valid preset planner without a no-route screen",
+    "Home, options, directory, line, results and DICT demo fit 320–1440px",
+    "No browser exceptions across all route and map journeys"
+  ],
+  "errors": [],
+  "references": 33
+}

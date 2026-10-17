@@ -41,7 +41,8 @@ const tile = '<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><
     const zoom = await page.evaluate(() => window.__maps[0].getZoom());
     await page.locator('#home-trip-map .leaflet-control-zoom-in').click();
     await page.waitForFunction(previous => window.__maps[0].getZoom() > previous, zoom);
-    await page.locator('#home-trip-map .leaflet-map').scrollIntoViewIfNeeded();
+    await page.waitForFunction(() => !window.__maps[0]._animatingZoom);
+    await page.locator('#home-trip-map .leaflet-map').evaluate(element => element.scrollIntoView({ block: 'center', behavior: 'instant' }));
     const center = await page.evaluate(() => window.__maps[0].getCenter().toString());
     const bounds = await page.locator('#home-trip-map .leaflet-map').boundingBox();
     await page.mouse.move(bounds.x + bounds.width * .7, bounds.y + bounds.height * .5);
@@ -57,7 +58,7 @@ const tile = '<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><
     assert.ok(await page.getByRole('button', { name: 'Destination: Divisoria', exact: true }).isVisible());
     assert.match(await page.locator('#home-trip-map .map-connection-note').innerText(), /straight line, not a verified/);
     assert.equal(await page.evaluate(() => { let count = 0; window.__maps[0].eachLayer(layer => { if (layer instanceof L.Polyline) count++; }); return count; }), 1);
-    await page.getByRole('button', { name: 'Find my jeepney' }).click();
+    await findAndSelect(page);
     assert.match(await page.locator('.route-badge').innerText(), /D1/);
     assert.equal(await page.locator('.timeline li').count(), 4);
     await page.locator('#result-trip-map summary').click();
@@ -92,7 +93,7 @@ const tile = '<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><
     await gps.page.waitForFunction(() => window.__maps.length > 0);
     const actualCoordinates = await gps.page.evaluate(() => { let coordinates; window.__maps[0].eachLayer(layer => { if (layer instanceof L.Marker && layer.options.title === 'Origin: Current location') coordinates = [layer.getLatLng().lat, layer.getLatLng().lng]; }); return coordinates; });
     assert.deepEqual(actualCoordinates, [8.4862342, 124.6567018]);
-    await gps.page.getByRole('button', { name: 'Find my jeepney' }).click();
+    await findAndSelect(gps.page);
     assert.match(await gps.page.locator('#empty-title').innerText(), /Live jeepney routing/);
     assert.equal(await gps.page.locator('#empty-screen .recommendation').count(), 0);
     assert.equal(await gps.page.locator('#gps-trip-map .leaflet-marker-icon').count(), 7);
@@ -106,7 +107,7 @@ const tile = '<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><
     assert.equal(await gps.page.locator('#origin').inputValue(), 'USTP CDO');
     assert.equal(await gps.page.locator('#destination').inputValue(), 'Divisoria');
     assert.match(await gps.page.locator('#location-status').innerText(), /sample landmark, not your detected position/);
-    await gps.page.getByRole('button', { name: 'Find my jeepney' }).click();
+    await findAndSelect(gps.page);
     assert.match(await gps.page.locator('.route-badge').innerText(), /D1/);
     pass('GPS unsupported state explicitly switches to a working demo trip without losing destination');
     await gps.context.close();
@@ -116,7 +117,7 @@ const tile = '<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><
     await manual.page.waitForFunction(() => document.querySelector('#origin').value === 'Current location');
     await manual.page.locator('#origin').fill('Centrio');
     await manual.page.locator('#destination').fill('Divisoria');
-    await manual.page.getByRole('button', { name: 'Find my jeepney' }).click();
+    await findAndSelect(manual.page);
     assert.match(await manual.page.locator('.route-badge').innerText(), /D6/);
     pass('Manually editing the origin clears GPS state and restores curated routing');
     await manual.context.close();
@@ -126,7 +127,7 @@ const tile = '<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><
     await outside.page.waitForFunction(() => document.querySelector('#origin').value === 'Current location');
     assert.match(await outside.page.locator('#location-status').innerText(), /outside our Cagayan de Oro demo area/);
     await outside.page.locator('#destination').fill('Divisoria');
-    await outside.page.getByRole('button', { name: 'Find my jeepney' }).click();
+    await findAndSelect(outside.page);
     assert.match(await outside.page.locator('.empty-content').innerText(), /outside our Cagayan de Oro demo area/);
     pass('Outside-CDO GPS is retained honestly, with no substituted landmark or jeepney');
     await outside.page.reload();
@@ -214,3 +215,11 @@ const tile = '<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><
     console.log(`\n${passed.length} map/geolocation checks passed.`);
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });
+
+// Route choice is intentional in the complete experience; retain the detail checks.
+async function findAndSelect(target) {
+  await target.getByRole('button', { name: 'Find my jeepney', exact: true }).click();
+  if (await target.locator('#options-screen').isVisible()) {
+    await target.locator('[data-select-option]').first().click();
+  }
+}

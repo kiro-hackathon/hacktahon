@@ -2,15 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
   <meta name="theme-color" content="#147D76">
-  <meta name="description" content="Find your next jeepney journey in Cagayan de Oro. An interactive prototype with clearly labeled demonstration routes.">
+  <meta name="description" content="Find your next jeepney journey in Cagayan de Oro. An interactive prototype with simple, research-backed route references.">
   <title>RoutaCagayan — Your next sakay, made simple.</title>
   <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg">
   <link rel="stylesheet" href="./assets/vendor/leaflet/leaflet.css">
   <link rel="stylesheet" href="./src/styles.css">
   <link rel="stylesheet" href="./src/maps.css">
   <link rel="stylesheet" href="./src/ride-handoff.css">
+  <link rel="stylesheet" href="./src/experience.css">
+  <link rel="stylesheet" href="./src/routa-ai.css">
   <script defer src="./assets/vendor/leaflet/leaflet.js"></script>
   <script type="module" src="./src/app.js"></script>
 </head>
@@ -36,27 +38,27 @@
             <div class="trip-fields">
               <div class="field-row origin-row">
                 <span class="field-symbol origin-symbol" aria-hidden="true"></span>
-                <div class="field-content"><label for="origin">STARTING POINT</label><div class="autocomplete"><input id="origin" name="origin" type="text" value="USTP CDO" placeholder="Where are you coming from?" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="origin-list" aria-describedby="form-error"><ul id="origin-list" role="listbox" class="suggestions" hidden></ul></div></div>
+                <div class="field-content"><label for="origin">STARTING POINT</label><div class="autocomplete"><input id="origin" name="origin" type="text" readonly value="DICT Office" placeholder="Choose your starting point" autocomplete="off" role="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="destination-search" aria-describedby="form-error"><ul id="origin-list" role="listbox" class="suggestions" hidden></ul></div></div>
                 <button type="button" id="swap-button" class="swap-button" aria-label="Swap starting point and destination" title="Swap locations"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 19V5m-4 4 4-4 4 4m4-4v14m-4-4 4 4 4-4"/></svg></button>
               </div>
               <div class="field-row destination-row">
                 <svg class="destination-symbol" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 10c0 5-7 10-7 10S5 15 5 10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2"/></svg>
-                <div class="field-content"><label for="destination">DESTINATION</label><div class="autocomplete"><input id="destination" name="destination" type="text" placeholder="Where do you want to go?" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="destination-list" aria-describedby="form-error"><ul id="destination-list" role="listbox" class="suggestions" hidden></ul></div></div>
+                <div class="field-content"><label for="destination">DESTINATION</label><div class="autocomplete"><input id="destination" name="destination" type="text" readonly value="Centrio" placeholder="Choose your destination" autocomplete="off" role="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="destination-search" aria-describedby="form-error"><ul id="destination-list" role="listbox" class="suggestions" hidden></ul></div></div>
               </div>
             </div>
-            <div class="location-actions"><button type="button" id="use-location"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/></svg><span>Use my current location</span></button><button type="button" id="demo-location">Try demo location: USTP CDO</button></div>
-            <p class="location-status" id="location-status" role="status">Optional. Your coordinates stay in this tab.</p>
+            <div class="location-actions"><button type="button" id="use-location" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/></svg><span>Use my current location</span></button><button type="button" id="demo-location">Start at DICT Office</button></div>
+            <p class="location-status" id="location-status" role="status">Demo mode · choose a starting point and destination.</p>
             <p id="form-error" class="form-error" role="alert" hidden></p>
             <button type="submit" class="primary-button" id="find-button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg>Find my jeepney<span class="button-arrow" aria-hidden="true">→</span></button>
           </form>
-          <p class="planner-footnote"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>No sign-ups. Just your next stop.</p>
+          <p class="planner-footnote"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>Ready-to-view demo journeys. Confirm signboards for actual travel.</p>
         </div>
 
         <div class="explore-panel" aria-label="Illustrated example journey. Schematic only, not a map.">
           <div class="panel-topline"><span><span class="tiny-dot"></span> MADE FOR THE CITY OF GOLDEN FRIENDSHIP</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v4m0 10v4M3 12h4m10 0h4M5.6 5.6l2.8 2.8m7.2 7.2 2.8 2.8m0-12.8-2.8 2.8m-7.2 7.2-2.8 2.8"/><circle cx="12" cy="12" r="3"/></svg></div>
           <div class="illustration-heading">A familiar city.<br><span>A clearer way to go.</span></div>
           <svg class="city-illustration" viewBox="0 0 620 430" role="img" aria-labelledby="city-art-title">
-            <title id="city-art-title">A teal and amber jeepney on an illustrated demonstration route between USTP and Divisoria</title>
+            <title id="city-art-title">A teal and amber jeepney on an illustrated demonstration route between USTP and Limketkai</title>
             <defs><pattern id="dot-grid" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="#cedbd1"/></pattern><filter id="art-shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="7" stdDeviation="6" flood-color="#173f37" flood-opacity=".09"/></filter></defs>
             <rect width="620" height="430" fill="url(#dot-grid)"/>
             <g fill="none" stroke="#dce4d9" stroke-width="14" stroke-linecap="round"><path d="M-20 270h155l70-70h140l60-60h250M95 460V330l70-70V-10M420 450V270l90-90V-10M-20 80h200l80 80h390"/></g>
@@ -67,7 +69,7 @@
             <path d="M155 92v23m274 201v27" fill="none" stroke="#147d76" stroke-width="4" stroke-dasharray="2 7" stroke-linecap="round"/>
             <circle cx="155" cy="112" r="10" fill="#fff" stroke="#147d76" stroke-width="5"/>
             <g transform="translate(429 331)"><circle r="14" fill="#e8a43b"/><circle r="5" fill="#fff"/></g>
-            <g filter="url(#art-shadow)"><rect x="83" y="42" width="152" height="45" rx="9" fill="white"/><circle cx="104" cy="64" r="5" fill="#147d76"/><text x="119" y="69" fill="#142b36" font-family="Arial,sans-serif" font-size="14" font-weight="700">USTP CDO</text><rect x="363" y="359" width="145" height="45" rx="9" fill="white"/><path d="M381 371v17m-4-17h12v8h-12" stroke="#bc7a19" fill="none" stroke-width="2"/><text x="400" y="387" fill="#142b36" font-family="Arial,sans-serif" font-size="14" font-weight="700">Divisoria</text></g>
+            <g filter="url(#art-shadow)"><rect x="83" y="42" width="152" height="45" rx="9" fill="white"/><circle cx="104" cy="64" r="5" fill="#147d76"/><text x="119" y="69" fill="#142b36" font-family="Arial,sans-serif" font-size="14" font-weight="700">USTP CDO</text><rect x="363" y="359" width="145" height="45" rx="9" fill="white"/><path d="M381 371v17m-4-17h12v8h-12" stroke="#bc7a19" fill="none" stroke-width="2"/><text x="400" y="387" fill="#142b36" font-family="Arial,sans-serif" font-size="14" font-weight="700">Limketkai</text></g>
             <g class="jeepney" transform="translate(207 169) rotate(-7 105 50)" stroke="#142b36" stroke-width="3" stroke-linejoin="round">
               <ellipse cx="108" cy="97" rx="113" ry="12" fill="#bdcbbc" opacity=".45" stroke="none"/>
               <path d="M14 29h155l25 28h29v29H4V49Z" fill="#147d76"/>
@@ -89,7 +91,7 @@
       <div id="home-map-slot"></div>
 
       <section class="popular-section" aria-labelledby="popular-title"><div class="section-heading"><div><span class="eyebrow">A GOOD PLACE TO START</span><h2 id="popular-title">Around the city</h2></div><span class="section-hint">Pick your next stop <span aria-hidden="true">↗</span></span></div><div id="popular-destinations" class="destination-grid"></div></section>
-      <div class="demo-note"><span class="info-icon" aria-hidden="true">i</span><p><strong>A little heads-up: this is a prototype.</strong> Routes and stops are fictional examples, not real travel directions.</p><button class="text-button" id="about-demo">About the demo <span aria-hidden="true">↗</span></button></div>
+      <div class="demo-note"><span class="info-icon" aria-hidden="true">i</span><p><strong>A little heads-up: this is a prototype.</strong> Familiar signboards and approximate corridors. Confirm the route and stops with the driver.</p><button class="text-button" id="about-demo">About the demo <span aria-hidden="true">↗</span></button></div>
     </section>
 
     <section id="result-screen" class="result-screen" aria-labelledby="result-title" hidden></section>
@@ -99,6 +101,6 @@
 
   <footer class="site-footer"><span>Made for the everyday journey.</span><span>RoutaCagayan <span aria-hidden="true">·</span> CDO prototype, 2026</span></footer>
 
-  <dialog id="about-dialog" aria-labelledby="dialog-title"><div class="dialog-top"><span class="eyebrow">GOOD TO KNOW</span><button id="close-dialog" class="icon-button" aria-label="Close dialog">×</button></div><h2 id="dialog-title">Your next sakay,<br>in three simple steps.</h2><ol class="how-steps"><li><span>01</span><div><strong>Choose your places</strong><p>Start with a CDO landmark, then choose where you want to go.</p></div></li><li><span>02</span><div><strong>Meet your demo jeepney</strong><p>Find a curated example with a route badge, boarding point, and drop-off.</p></div></li><li><span>03</span><div><strong>Follow the journey</strong><p>See each step from your first walk to your final stop.</p></div></li></ol><div class="dialog-disclosure"><strong>A prototype, with fictional directions.</strong><p>D-series codes, boarding points, stops, and instructions are invented for this demo. The landmarks are real; the journeys are not verified. Optional GPS shows your position only. No live routing, fares, or travel times are provided. Check local transport information before traveling.</p></div><button id="got-it" class="primary-button">Got it. Let’s plan a trip <span aria-hidden="true">→</span></button></dialog>
+  <dialog id="about-dialog" aria-labelledby="dialog-title"><div class="dialog-top"><span class="eyebrow">GOOD TO KNOW</span><button id="close-dialog" class="icon-button" aria-label="Close dialog">×</button></div><h2 id="dialog-title">Your next sakay,<br>in three simple steps.</h2><ol class="how-steps"><li><span>01</span><div><strong>Choose your places</strong><p>Start with a CDO landmark, then choose where you want to go.</p></div></li><li><span>02</span><div><strong>Find your jeepney signboard</strong><p>See a familiar signboard, corridor highlights, and source reference.</p></div></li><li><span>03</span><div><strong>Follow the journey</strong><p>See each step from your first walk to your final stop.</p></div></li></ol><div class="dialog-disclosure"><strong>A prototype with researched route references.</strong><p>Routes use documented commuter signboards. Exact stops, directional diversions, and current service still need local confirmation. Ask the driver before boarding. Optional GPS shows your position only. No live routing, fares, or travel times are provided. Check local transport information before traveling.</p></div><button id="got-it" class="primary-button">Got it. Let’s plan a trip <span aria-hidden="true">→</span></button></dialog>
 </body>
 </html>

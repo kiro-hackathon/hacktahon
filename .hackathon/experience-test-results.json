@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-17",
+  "browser": "Chrome through Playwright; mobile touch emulation",
+  "tiles": "Fixture tiles for repeated map checks",
+  "safeArea": "CSS 24px simulated inset; physical notch not tested",
+  "passed": [
+    "360px: Home → focused search → compare options → details → four manual steps → arrival → Home; refresh, previous step, safe action placement, and selections preserved",
+    "390px: Home → focused search → compare options → details → four manual steps → arrival → Home; refresh, previous step, safe action placement, and selections preserved",
+    "430px: Home → focused search → compare options → details → four manual steps → arrival → Home; refresh, previous step, safe action placement, and selections preserved",
+    "1440px: Home → focused search → compare options → details → four manual steps → arrival → Home; refresh, previous step, safe action placement, and selections preserved",
+    "Jeepneys directory searches the shared seven lines, exposes explicit reverse data, and plans a matching selected journey in My Trip",
+    "Seven-step D2 → Centrio → D6 transfer guide: map transfer marker, exit confirmation, tab switching, refresh/resume, and intentional completion clearing",
+    "Unknown/same-place searches explain recovery; search Back preserves chosen places; details Back and browser Back allow changing options",
+    "Selecting another journey cannot silently replace an existing saved guide",
+    "Unsupported pair offers working examples; real browser GPS denial preserves manual/demo routing",
+    "Simulated 24px safe area keeps sticky CTA above navigation; expanded map cannot block the primary action",
+    "Persistence stores fixture identifiers/progress only; malformed storage does not break the app",
+    "Home, options, transfer details, directory, line details, My Trip, and transfer guide have no overflow at 360/390/430/1440px",
+    "Focused search remains usable in a 390x450 reduced visual viewport (keyboard-space approximation)",
+    "Blocked storage still allows in-tab guide resume and explains the persistence limit",
+    "No console errors or uncaught application exceptions during the complete walkthrough"
+  ],
+  "errors": []
+}
